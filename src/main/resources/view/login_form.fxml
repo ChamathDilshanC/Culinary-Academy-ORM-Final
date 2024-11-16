@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<StackPane fx:id="rootPane" styleClass="rootPane"
+           xmlns="http://javafx.com/javafx/19.0.2.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="lk.ijse.controller.LoginFormController"
+           stylesheets="@../styles/login-styles.css">
+
+    <!-- Background with animated shapes -->
+    <Pane fx:id="backgroundPane" styleClass="background-pane">
+        <!-- Animated background shapes -->
+        <Circle fx:id="bgCircle1" styleClass="bg-shape" radius="100"/>
+        <Circle fx:id="bgCircle2" styleClass="bg-shape" radius="80"/>
+        <Circle fx:id="bgCircle3" styleClass="bg-shape" radius="120"/>
+    </Pane>
+
+    <!-- Main Content -->
+    <VBox spacing="20">
+        <!-- Title Bar -->
+        <HBox styleClass="title-bar" alignment="CENTER_RIGHT" spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label styleClass="window-title" text="Culinary Academy" HBox.hgrow="ALWAYS"/>
+
+            <Button styleClass="window-btn" onAction="#minimizeStage">
+                <graphic>
+                    <FontAwesomeIconView glyphName="MINUS" size="12"/>
+                </graphic>
+            </Button>
+
+            <Button styleClass="window-btn" onAction="#maximizeStage">
+                <graphic>
+                    <FontAwesomeIconView glyphName="EXPAND" size="12"/>
+                </graphic>
+            </Button>
+
+            <Button styleClass="window-btn, close-btn" onAction="#closeStage">
+                <graphic>
+                    <FontAwesomeIconView glyphName="TIMES" size="12"/>
+                </graphic>
+            </Button>
+        </HBox>
+
+        <!-- Content Container -->
+        <StackPane VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets top="20" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <!-- Login Container -->
+            <HBox styleClass="login-container" alignment="CENTER">
+                <!-- Left Panel -->
+                <VBox styleClass="left-panel" alignment="CENTER" spacing="20">
+                    <padding>
+                        <Insets top="30" right="40" bottom="30" left="40"/>
+                    </padding>
+
+                    <VBox styleClass="brand-box" alignment="CENTER" spacing="15">
+                        <Text styleClass="brand-title" text="Welcome to"/>
+                        <Text styleClass="brand-name" text="Culinary"/>
+                        <Text styleClass="brand-name" text="Academy"/>
+                        <Text styleClass="brand-subtitle" text="Crafting Culinary Excellence"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Right Panel -->
+                <VBox styleClass="right-panel" alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets top="30" right="40" bottom="30" left="40"/>
+                    </padding>
+
+                    <VBox styleClass="login-form" maxWidth="400" spacing="30">
+                        <!-- Login Header -->
+                        <VBox spacing="10">
+                            <Text styleClass="login-title" text="Sign In"/>
+                            <Text styleClass="login-subtitle" text="Please login to continue"/>
+                        </VBox>
+
+                        <!-- Form Fields -->
+                        <VBox spacing="20">
+                            <!-- Username Field -->
+                            <VBox spacing="5">
+                                <Label styleClass="field-label" text="Username"/>
+                                <HBox styleClass="input-box" alignment="CENTER_LEFT">
+                                    <FontAwesomeIconView glyphName="USER" styleClass="field-icon"/>
+                                    <TextField fx:id="txtUsername" promptText="Enter your username"
+                                               styleClass="input-field" HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- Password Field -->
+                            <VBox spacing="5">
+                                <Label styleClass="field-label" text="Password"/>
+                                <HBox styleClass="input-box" alignment="CENTER_LEFT">
+                                    <FontAwesomeIconView glyphName="LOCK" styleClass="field-icon"/>
+                                    <PasswordField fx:id="txtPassword" promptText="Enter your password"
+                                                   styleClass="input-field" HBox.hgrow="ALWAYS"/>
+                                    <Button onAction="#togglePasswordVisibility" styleClass="icon-button">
+                                        <graphic>
+                                            <FontAwesomeIconView fx:id="iconEye" glyphName="EYE"/>
+                                        </graphic>
+                                    </Button>
+                                </HBox>
+                                <TextField fx:id="txtPasswordVisible" styleClass="input-field"
+                                           managed="false" visible="false"/>
+                            </VBox>
+
+                            <!-- Remember Me & Forgot Password -->
+                            <HBox alignment="CENTER_LEFT">
+                                <CheckBox fx:id="chkRemember" text="Remember me"
+                                          styleClass="remember-checkbox"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Hyperlink fx:id="linkForgot" text="Forgot Password?"
+                                           onAction="#handleForgotPassword"
+                                           styleClass="forgot-link"/>
+                            </HBox>
+
+                            <!-- Login Button -->
+                            <Button fx:id="btnLogin" text="Sign In"
+                                    onAction="#handleLogin"
+                                    styleClass="login-button"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+            </HBox>
+        </StackPane>
+    </VBox>
+
+    <!-- Loading Overlay -->
+    <StackPane fx:id="loadingPane" styleClass="loading-overlay"
+               visible="false" managed="false">
+        <ProgressIndicator styleClass="loading-spinner"/>
+    </StackPane>
+
+</StackPane>

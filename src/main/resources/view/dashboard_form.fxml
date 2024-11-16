@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.shape.Circle?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="lk.ijse.controller.DashboardFormController"
+            stylesheets="@/styles/dashboard-styles.css">
+    <top>
+        <HBox alignment="CENTER_RIGHT" styleClass="title-bar">
+            <Button styleClass="window-button, minimize-button" onAction="#handleMinimize">
+                <graphic>
+                    <FontAwesomeIconView glyphName="MINUS" size="16"/>
+                </graphic>
+            </Button>
+            <Button styleClass="window-button, close-button" onAction="#handleClose">
+                <graphic>
+                    <FontAwesomeIconView glyphName="TIMES" size="16"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </top>
+    <left>
+        <VBox spacing="5" styleClass="sidebar">
+            <!-- Top Section -->
+            <VBox spacing="5">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20" />
+                </padding>
+
+                <!-- Logo and Title -->
+                <HBox styleClass="logo-container" alignment="CENTER_LEFT" spacing="10">
+                    <FontAwesomeIconView glyphName="CUTLERY" size="24" styleClass="logo-icon"/>
+                    <Label text="Culinary Academy" styleClass="logo-text" />
+                </HBox>
+
+                <!-- User Profile Section -->
+                <VBox styleClass="user-profile-section">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Circle fx:id="userAvatar" radius="20" styleClass="user-avatar"/>
+                        <VBox spacing="2">
+                            <Label fx:id="userName" text="admin" styleClass="user-name"/>
+                            <Label fx:id="userRole" text="Administrator" styleClass="user-role"/>
+                        </VBox>
+                    </HBox>
+                    <Label fx:id="timeLabel" styleClass="time-label"/>
+                    <Label fx:id="dateLabel" styleClass="date-label"/>
+                </VBox>
+
+                <!-- Navigation Section -->
+                <VBox spacing="5" styleClass="nav-section">
+                    <Button text="Dashboard" onAction="#loadDashboard" styleClass="nav-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="HOME" size="16"/>
+                        </graphic>
+                    </Button>
+
+                    <Button text="Students" onAction="#loadStudents" styleClass="nav-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="USERS" size="16"/>
+                        </graphic>
+                    </Button>
+
+                    <Button text="Culinary Programs" onAction="#loadCulinaryPrograms" styleClass="nav-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="BOOK" size="16"/>
+                        </graphic>
+                    </Button>
+
+                    <Button text="Registrations" onAction="#loadRegistrations" styleClass="nav-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="LIST_ALT" size="16"/>
+                        </graphic>
+                    </Button>
+
+                    <Button text="Reports" onAction="#loadReports" styleClass="nav-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="BAR_CHART" size="16"/>
+                        </graphic>
+                    </Button>
+
+                    <Button text="Manage Users" onAction="#loadUserManagement" styleClass="nav-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="USERS" size="16"/>
+                        </graphic>
+                    </Button>
+                    <Button text="Settings" onAction="#loadSettings" styleClass="nav-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="GEAR" size="16"/>
+                        </graphic>
+                    </Button>
+                </VBox>
+            </VBox>
+
+            <!-- Spacer VBox -->
+            <VBox VBox.vgrow="ALWAYS" styleClass="spacer" />
+
+            <!-- Bottom Buttons -->
+            <VBox spacing="5" styleClass="bottom-buttons">
+                <padding>
+                    <Insets top="0" right="20" bottom="20" left="20" />
+                </padding>
+
+                <Button text="Logout" onAction="#handleLogout" styleClass="nav-button, logout-button">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="SIGN_OUT" size="16"/>
+                    </graphic>
+                </Button>
+
+                <Button text="Exit" onAction="#handleExit" styleClass="nav-button, exit-button">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="POWER_OFF" size="16"/>
+                    </graphic>
+                </Button>
+            </VBox>
+        </VBox>
+    </left>
+
+    <center>
+        <BorderPane fx:id="contentArea" styleClass="content-area">
+            <center>
+                <VBox alignment="CENTER" spacing="20" styleClass="welcome-content">
+                    <FontAwesomeIconView glyphName="GRADUATION_CAP" size="60" styleClass="welcome-icon"/>
+                    <Label text="Welcome to Culinary Academy" styleClass="welcome-title"/>
+                    <Label text="Select an option from the sidebar to begin" styleClass="welcome-subtitle"/>
+                </VBox>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>

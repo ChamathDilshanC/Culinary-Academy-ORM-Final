@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.shape.Circle?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox fx:id="Rootpane" stylesheets="@/styles/dashboard-content-styles.css"
+        spacing="25" styleClass="dashboard-container" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="lk.ijse.controller.DashboardContentFormController">
+
+    <!-- Header Section -->
+    <VBox styleClass="header-section">
+        <Label text="Academy Overview" styleClass="header-title"/>
+        <Label text="View and manage your academy performance metrics" styleClass="header-subtitle"/>
+    </VBox>
+
+    <!-- Stats Cards Row -->
+    <HBox spacing="20" styleClass="stats-container">
+        <VBox styleClass="stats-card, primary-card">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Circle styleClass="stat-circle" radius="25"/>
+                <FontAwesomeIconView glyphName="USERS" size="18" styleClass="stat-icon"/>
+                <VBox>
+                    <Label fx:id="totalStudentsLabel" text="2,584" styleClass="stat-number"/>
+                    <Label text="Total Students" styleClass="stat-label"/>
+                    <Label text="+14% from last month" styleClass="stat-change"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="stats-card, success-card">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Circle styleClass="stat-circle" radius="25"/>
+                <FontAwesomeIconView glyphName="GRADUATION_CAP" size="18" styleClass="stat-icon"/>
+                <VBox>
+                    <Label fx:id="activeProgramsLabel" text="5" styleClass="stat-number"/>
+                    <Label text="Active Programs" styleClass="stat-label"/>
+                    <Label text="All programs running" styleClass="stat-info"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="stats-card, info-card">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Circle styleClass="stat-circle" radius="25"/>
+                <FontAwesomeIconView glyphName="USER_PLUS" size="18" styleClass="stat-icon"/>
+                <VBox>
+                    <Label fx:id="newRegistrationsLabel" text="156" styleClass="stat-number"/>
+                    <Label text="New Registrations" styleClass="stat-label"/>
+                    <Label text="This month" styleClass="stat-info"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="stats-card, warning-card">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Circle styleClass="stat-circle" radius="25"/>
+                <FontAwesomeIconView glyphName="MONEY" size="18" styleClass="stat-icon"/>
+                <VBox>
+                    <Label fx:id="revenueLabel" text="Rs. 2.8M" styleClass="stat-number"/>
+                    <Label text="Total Revenue" styleClass="stat-label"/>
+                    <Label text="+22% from last month" styleClass="stat-change"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </HBox>
+
+    <!-- Action Cards Grid -->
+    <GridPane hgap="20" vgap="20" styleClass="action-grid">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="33.33"/>
+            <ColumnConstraints percentWidth="33.33"/>
+            <ColumnConstraints percentWidth="33.33"/>
+        </columnConstraints>
+
+        <!-- Quick Action Cards -->
+        <VBox styleClass="action-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <FontAwesomeIconView glyphName="USER_PLUS" size="20" styleClass="action-icon"/>
+                <Label text="Register New Student" styleClass="action-title"/>
+            </HBox>
+            <Label text="Add a new student to the system" styleClass="action-description"/>
+            <Button text="Register" onAction="#handleNewStudent" styleClass="action-button"/>
+        </VBox>
+
+        <VBox styleClass="action-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <FontAwesomeIconView glyphName="EDIT" size="20" styleClass="action-icon"/>
+                <Label text="Program Registration" styleClass="action-title"/>
+            </HBox>
+            <Label text="Enroll students in programs" styleClass="action-description"/>
+            <Button text="Enroll" onAction="#handleNewRegistration" styleClass="action-button"/>
+        </VBox>
+
+        <VBox styleClass="action-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <FontAwesomeIconView glyphName="BAR_CHART" size="20" styleClass="action-icon"/>
+                <Label text="View Reports" styleClass="action-title"/>
+            </HBox>
+            <Label text="Access detailed analytics" styleClass="action-description"/>
+            <Button text="View" onAction="#handleViewReports" styleClass="action-button"/>
+        </VBox>
+
+        <VBox styleClass="action-card" GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <FontAwesomeIconView glyphName="BOOK" size="20" styleClass="action-icon"/>
+                <Label text="Manage Programs" styleClass="action-title"/>
+            </HBox>
+            <Label text="Update program details" styleClass="action-description"/>
+            <Button text="Manage" onAction="#handleManagePrograms" styleClass="action-button"/>
+        </VBox>
+
+        <VBox styleClass="action-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <FontAwesomeIconView glyphName="USERS" size="20" styleClass="action-icon"/>
+                <Label text="Student Records" styleClass="action-title"/>
+            </HBox>
+            <Label text="View student information" styleClass="action-description"/>
+            <Button text="View" onAction="#handleStudentRecords" styleClass="action-button"/>
+        </VBox>
+
+        <VBox styleClass="action-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <FontAwesomeIconView glyphName="COG" size="20" styleClass="action-icon"/>
+                <Label text="Settings" styleClass="action-title"/>
+            </HBox>
+            <Label text="Configure system settings" styleClass="action-description"/>
+            <Button text="Configure" onAction="#handleSettings" styleClass="action-button"/>
+        </VBox>
+    </GridPane>
+</VBox>

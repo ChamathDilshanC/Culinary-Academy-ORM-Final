@@ -1,0 +1,157 @@
+/* Main Styles */
+.root {
+    -fx-background-color: #f8f9fa;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.sidebar {
+    -fx-background-color: white;
+    -fx-min-width: 250px;
+    -fx-pref-width: 250px;
+    -fx-max-width: 250px;
+    -fx-min-height: 768px; /* Set minimum height */
+}
+
+/* Spacer to push bottom buttons down */
+.spacer {
+    -fx-min-height: 200px; /* Adjust this value to push buttons lower */
+}
+
+.logo-container {
+    -fx-padding: 0 0 20px 0;
+}
+
+.logo-icon {
+    -fx-fill: #3b82f6;
+}
+
+.logo-text {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.user-profile-section {
+    -fx-padding: 15px 0;
+    -fx-border-color: transparent transparent #edf2f7 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.nav-section {
+    -fx-padding: 10px 0;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-min-width: 210px;
+}
+
+.nav-button:hover {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #3b82f6;
+}
+
+.nav-button .glyph-icon {
+    -fx-fill: #64748b;
+    -fx-padding: 0 10px 0 0;
+}
+
+.nav-button:hover .glyph-icon {
+    -fx-fill: #3b82f6;
+}
+
+/* Bottom Buttons Section */
+.bottom-buttons {
+    -fx-border-color: #edf2f7 transparent transparent transparent;
+    -fx-border-width: 1px;
+    -fx-margin-top: 250px; /* Add large top margin */
+}
+
+.logout-button {
+    -fx-text-fill: #ef4444;
+}
+
+.logout-button:hover {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #ef4444;
+}
+
+.logout-button .glyph-icon {
+    -fx-fill: #ef4444;
+}
+
+.exit-button {
+    -fx-text-fill: #64748b;
+}
+
+.exit-button:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.time-label, .date-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-padding: 2px 0 0 0;
+}
+
+.content-area {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+}
+
+.welcome-content {
+    -fx-padding: 40px;
+}
+
+.welcome-icon {
+    -fx-fill: #3b82f6;
+}
+
+.welcome-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.welcome-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+/* Add these new styles to your existing CSS */
+
+.title-bar {
+    -fx-background-color: white;
+    -fx-padding: 5px 10px;
+    -fx-border-color: #edf2f7;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.window-button {
+    -fx-background-color: transparent;
+    -fx-min-width: 40px;
+    -fx-min-height: 30px;
+    -fx-cursor: hand;
+}
+
+.window-button .glyph-icon {
+    -fx-fill: #64748b;
+}
+
+.minimize-button:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.minimize-button:hover .glyph-icon {
+    -fx-fill: #3b82f6;
+}
+
+.close-button:hover {
+    -fx-background-color: #ef4444;
+}
+
+.close-button:hover .glyph-icon {
+    -fx-fill: white;
+}
