@@ -10,16 +10,22 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import de.jensd.fx.glyphs.fontawesome.*;
+import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.StudentBO;
+import lk.ijse.bo.custom.UserBO;
+import lk.ijse.dto.UserDTO;
+import lk.ijse.entity.User.Role;
 import lk.ijse.util.AlertUtil;
 import lk.ijse.util.NotificationUtil;
+import lk.ijse.util.PasswordEncoder;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 public class LoginFormController implements Initializable {
@@ -35,6 +41,7 @@ public class LoginFormController implements Initializable {
     @FXML private Button btnLogin;
     @FXML private StackPane loadingPane;
 
+    private final UserBO userBO = (UserBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.USER);
     private boolean passwordVisible = false;
     private double xOffset = 0;
     private double yOffset = 0;
@@ -128,41 +135,50 @@ public class LoginFormController implements Initializable {
 
         PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
         pause.setOnFinished(e -> {
-            if (validateLogin(username, password)) {
-                onLoginSuccess();
-            } else {
+            try {
+                UserDTO user = userBO.findByUsername(username);
+                if (user != null && PasswordEncoder.verify(password, user.getPassword())) {
+                    // Update last login time
+                    user.setLastLogin(LocalDateTime.now());
+                    userBO.updateUser(user);
+                    onLoginSuccess(user);
+                } else {
+                    onLoginFailed();
+                }
+            } catch (Exception ex) {
+                NotificationUtil.showError("Login failed: " + ex.getMessage());
                 onLoginFailed();
+            } finally {
+                showLoading(false);
             }
-            showLoading(false);
         });
         pause.play();
     }
 
-    private boolean validateLogin(String username, String password) {
-        // TODO: Implement actual authentication
-        return username.equals("admin") && password.equals("admin123");
-    }
-
-    private void onLoginSuccess() {
-        NotificationUtil.showSuccess("Welcome back, " + txtUsername.getText() + "!");
+    private void onLoginSuccess(UserDTO user) {
+        String roleText = user.getRole() == Role.ADMIN ? "Administrator" : "Staff";
+        NotificationUtil.showSuccess("Welcome back, " + user.getUsername() + "!");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard_form.fxml"));
             Scene scene = new Scene(loader.load());
 
             DashboardFormController dashboardController = loader.getController();
-            dashboardController.setUserInfo(txtUsername.getText(), "Administrator");
+            dashboardController.setUserInfo(user.getUsername(), roleText);
+            dashboardController.initializeWithUser(user); // Add this method to DashboardFormController
 
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setScene(scene);
             stage.setMaximized(true);
         } catch (IOException e) {
-            NotificationUtil.showError("Failed to load dashboard");
+            NotificationUtil.showError("Failed to load dashboard: " + e.getMessage());
         }
     }
 
     private void onLoginFailed() {
         NotificationUtil.showError("Invalid username or password");
         playShakeAnimation();
+        txtPassword.clear();
+        txtPasswordVisible.clear();
     }
 
     private void playShakeAnimation() {
@@ -203,10 +219,27 @@ public class LoginFormController implements Initializable {
 
     @FXML
     private void handleForgotPassword() {
+        String username = txtUsername.getText();
+        if (username.isEmpty()) {
+            NotificationUtil.showWarning("Please enter your username first");
+            return;
+        }
+
         try {
+            UserDTO user = userBO.findByUsername(username);
+            if (user == null) {
+                NotificationUtil.showError("No account found with this username");
+                return;
+            }
+
             NotificationUtil.showInfo("Opening password reset window");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/forgot_password_form.fxml"));
             Parent root = loader.load();
+
+            // Pass the user to ForgotPasswordFormController
+            ForgotPasswordController controller = loader.getController();
+            controller.initData(user);
+
             Scene scene = new Scene(root);
             scene.setFill(null);
 
@@ -216,8 +249,9 @@ public class LoginFormController implements Initializable {
             popupStage.initOwner(btnLogin.getScene().getWindow());
             popupStage.centerOnScreen();
             popupStage.show();
-        } catch (IOException e) {
-            NotificationUtil.showError("Failed to open password reset window");
+
+        } catch (Exception e) {
+            NotificationUtil.showError("Error verifying username: " + e.getMessage());
         }
     }
 

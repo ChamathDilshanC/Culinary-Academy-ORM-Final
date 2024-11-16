@@ -19,6 +19,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
+import lk.ijse.dto.UserDTO;
 import lk.ijse.util.AlertUtil;
 import lk.ijse.util.NotificationUtil;
 
@@ -152,7 +153,7 @@ public class DashboardFormController implements Initializable {
         loadFXML("UserManagement.fxml");
     }
 
-    private void loadFXML(String fxmlFile) {
+    public void loadFXML(String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/" + fxmlFile));
             Parent root = loader.load();
@@ -178,4 +179,9 @@ public class DashboardFormController implements Initializable {
             Platform.exit();
         }
     }
+
+    public void initializeWithUser(UserDTO user) {
+        setUserInfo(user.getUsername(), user.getRole().name());
+    }
+
 }
