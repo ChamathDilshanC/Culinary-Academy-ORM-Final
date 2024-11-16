@@ -157,7 +157,6 @@ public class DashboardFormController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/" + fxmlFile));
             Parent root = loader.load();
             contentArea.setCenter(root);
-            NotificationUtil.showSuccess("Loaded " + fxmlFile.replace(".fxml", ""));
         } catch (IOException e) {
             NotificationUtil.showError("Failed to load " + fxmlFile);
         }
