@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="0" stylesheets="@/styles/StudentManagement.css" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="lk.ijse.controller.StudentFormController">
+
+    <!-- Main Content -->
+    <VBox styleClass="main-content" VBox.vgrow="ALWAYS">
+        <!-- Header -->
+        <VBox styleClass="content-header">
+            <Label text="Student Management" styleClass="page-title"/>
+            <Label text="Manage student information" styleClass="page-subtitle"/>
+        </VBox>
+
+        <!-- Form Container -->
+        <VBox fx:id="formContainer" styleClass="form-container">
+            <GridPane hgap="20" vgap="15">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+
+                <!-- Left Column -->
+                <VBox spacing="15" GridPane.columnIndex="0">
+                    <Label text="Student ID" styleClass="field-label"/>
+                    <TextField fx:id="idField" styleClass="text-field" editable="false"/>
+
+                    <Label text="First Name" styleClass="field-label"/>
+                    <TextField fx:id="firstNameField"
+                               styleClass="text-field"
+                               promptText="Enter first name"
+                               onKeyReleased="#validateField"/>
+
+                    <Label text="Last Name" styleClass="field-label"/>
+                    <TextField fx:id="lastNameField"
+                               styleClass="text-field"
+                               promptText="Enter last name"
+                               onKeyReleased="#validateField"/>
+                </VBox>
+
+                <!-- Right Column -->
+                <VBox spacing="15" GridPane.columnIndex="1">
+                    <Label text="Email" styleClass="field-label"/>
+                    <TextField fx:id="emailField"
+                               styleClass="text-field"
+                               promptText="example@email.com"
+                               onKeyReleased="#validateField"/>
+
+                    <Label text="Phone Number" styleClass="field-label"/>
+                    <TextField fx:id="phoneField"
+                               styleClass="text-field"
+                               promptText="Enter phone number"
+                               onKeyReleased="#validateField"/>
+
+                    <Label text="Address" styleClass="field-label"/>
+                    <TextField fx:id="addressField"
+                               styleClass="text-field"
+                               promptText="Enter address"
+                               onKeyReleased="#validateField"/>
+                </VBox>
+            </GridPane>
+
+            <!-- Form Buttons -->
+            <HBox spacing="10" styleClass="form-buttons">
+                <Button fx:id="clearBtn"
+                        text="Clear"
+                        styleClass="button, clear-button"
+                        onAction="#handleClear"/>
+                <Button fx:id="saveBtn"
+                        text="Save"
+                        styleClass="button, save-button"
+                        onAction="#handleSave"/>
+            </HBox>
+        </VBox>
+
+        <!-- Search and Controls -->
+        <HBox styleClass="search-container">
+            <TextField fx:id="searchField"
+                       promptText="Search students..."
+                       styleClass="search-field"
+                       HBox.hgrow="ALWAYS"
+                       onKeyReleased="#handleSearch"/>
+            <Button fx:id="hideFormBtn"
+                    text="Hide Form"
+                    styleClass="button, hide-form-button"
+                    onAction="#handleToggleForm"/>
+        </HBox>
+
+        <!-- Table -->
+        <TableView fx:id="studentTable" styleClass="student-table" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="167"/>
+                <TableColumn fx:id="colFullName" text="Full Name" prefWidth="167"/>
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="167"/>
+                <TableColumn fx:id="colPhone" text="Phone" prefWidth="167"/>
+                <TableColumn fx:id="colAddress" text="Address" prefWidth="167"/>
+                <TableColumn fx:id="colActions" text="Actions" prefWidth="167"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+
+        <!-- Status Bar -->
+        <HBox styleClass="status-bar">
+            <Label fx:id="totalStudentsLabel" text="Total Students: 0"/>
+        </HBox>
+    </VBox>
+</VBox>

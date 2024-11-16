@@ -131,4 +131,39 @@ public class UserBOImpl implements UserBO {
     public boolean existsByUsername(String username) throws Exception {
         return userDAO.existsByUsername(username);
     }
+
+    @Override
+    public boolean updateUserRole(Integer userId, Role role) throws Exception {
+        return userDAO.updateUserRole(userId, role);
+    }
+
+    @Override
+    public boolean updatePassword(Integer userId, String newPassword) throws Exception {
+        return userDAO.updatePassword(userId, newPassword);
+    }
+
+    @Override
+    public List<UserDTO> findByRole(Role role) throws Exception {
+        List<User> users = userDAO.findByRole(role);
+        ArrayList<UserDTO> userDTOs = new ArrayList<>();
+
+        for (User user : users) {
+            userDTOs.add(new UserDTO(
+                    user.getUserId(),
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.getEmail(),
+                    user.getRole(),
+                    user.getLastLogin(),
+                    user.getCreatedAt(),
+                    user.getUpdatedAt()
+            ));
+        }
+        return userDTOs;
+    }
+
+    @Override
+    public Integer getCurrentId() throws Exception {
+        return userDAO.getCurrentId();
+    }
 }

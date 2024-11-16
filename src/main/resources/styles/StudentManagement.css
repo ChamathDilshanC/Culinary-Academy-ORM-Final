@@ -1,0 +1,301 @@
+/* Variables */
+* {
+    -primary: #4f46e5;
+    -primary-dark: #4338ca;
+    -surface: #ffffff;
+    -background: #f9fafb;
+    -border: #e5e7eb;
+    -text-primary: #111827;
+    -text-secondary: #6b7280;
+    -success: #10b981;
+    -warning: #f59e0b;
+    -danger: #ef4444;
+}
+
+/* Main Content */
+.main-content {
+    -fx-background-color: -background;
+    -fx-padding: 30;
+    -fx-spacing: 20;
+}
+
+.content-header {
+    -fx-spacing: 5;
+}
+
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-primary;
+}
+
+.page-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: -text-secondary;
+}
+
+/* Form Styles */
+.form-container {
+    -fx-background-color: -surface;
+    -fx-padding: 25;
+    -fx-spacing: 20;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 1);
+}
+
+.field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-primary;
+}
+
+.text-field {
+    -fx-background-color: -background;
+    -fx-background-radius: 6;
+    -fx-border-color: -border;
+    -fx-border-radius: 6;
+    -fx-padding: 12;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused {
+    -fx-border-color: -primary;
+    -fx-background-color: -surface;
+}
+
+.form-buttons {
+    -fx-padding: 20 0 0 0;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+/* Button Styles */
+.button {
+    -fx-padding: 10 20;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.save-button {
+    -fx-background-color: -primary;
+    -fx-text-fill: white;
+}
+
+.save-button:hover {
+    -fx-background-color: -primary-dark;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+}
+
+.clear-button {
+    -fx-background-color: -background;
+    -fx-text-fill: -text-secondary;
+    -fx-border-color: -border;
+}
+
+.clear-button:hover {
+    -fx-background-color: derive(-background, -5%);
+}
+
+/* Search Section */
+.search-container {
+    -fx-spacing: 10;
+}
+
+.search-field {
+    -fx-background-color: -surface;
+    -fx-background-radius: 6;
+    -fx-border-color: -border;
+    -fx-border-radius: 6;
+    -fx-padding: 12;
+    -fx-font-size: 14px;
+}
+
+.search-field:focused {
+    -fx-border-color: -primary;
+}
+
+.hide-form-button {
+    -fx-background-color: -primary;
+    -fx-text-fill: white;
+}
+
+.hide-form-button:hover {
+    -fx-background-color: -primary-dark;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+}
+
+/* Table Styles */
+.student-table {
+    -fx-background-color: -surface;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 1);
+}
+
+.table-view {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -background;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 0 0 5 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 45px;
+    -fx-border-width: 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -text-primary;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+.table-row-cell {
+    -fx-background-color: -surface;
+    -fx-border-color: transparent transparent -border transparent;
+    -fx-padding: 5 0;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: derive(-surface, -1%);
+}
+
+.table-row-cell:hover {
+    -fx-background-color: derive(-background, 1%);
+}
+
+.table-row-cell:selected {
+    -fx-background-color: derive(-primary, 90%);
+    -fx-text-fill: -text-primary;
+}
+
+.table-view .table-cell {
+    -fx-padding: 12;
+    -fx-text-fill: -text-primary;
+    -fx-alignment: CENTER;
+    -fx-border-color: transparent;
+}
+
+/* Action Buttons in Table */
+.action-container {
+    -fx-spacing: 8;
+    -fx-alignment: center;
+}
+
+.edit-button {
+    -fx-background-color: -warning;
+    -fx-text-fill: white;
+    -fx-min-width: 65px;
+    -fx-padding: 8 15;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+
+.edit-button:hover {
+    -fx-background-color: derive(-warning, -10%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+}
+
+.delete-button {
+    -fx-background-color: -danger;
+    -fx-text-fill: white;
+    -fx-min-width: 65px;
+    -fx-padding: 8 15;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+
+.delete-button:hover {
+    -fx-background-color: derive(-danger, -10%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+}
+
+/* Status Bar */
+.status-bar {
+    -fx-padding: 15 0 0 0;
+}
+
+.status-bar Label {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 13px;
+}
+
+/* Scroll Bar Styling */
+.table-view .scroll-bar:horizontal,
+.table-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.table-view .increment-button,
+.table-view .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view .scroll-bar:horizontal .track,
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view .scroll-bar:horizontal .thumb,
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #ddd;
+    -fx-background-radius: 5em;
+}
+
+.table-view .scroll-bar:horizontal .thumb:hover,
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #bbb;
+}
+
+/* Form Validation Styles */
+.field-error {
+    -fx-border-color: -danger !important;
+}
+
+.error-label {
+    -fx-text-fill: -danger;
+    -fx-font-size: 11px;
+    -fx-padding: 4 0 0 0;
+}
+
+.field-success {
+    -fx-border-color: -success !important;
+}
+
+/* Animation Classes */
+.slide-up {
+    -fx-translate-y: -20;
+    -fx-opacity: 0;
+}
+
+.slide-down {
+    -fx-translate-y: 20;
+    -fx-opacity: 0;
+}
+
+/* Placeholder Styling */
+.table-row-cell:empty {
+    -fx-background-color: -surface;
+}
+
+.table-row-cell:empty .table-cell {
+    -fx-border-width: 0;
+}
+
+/* Focus Styling */
+.button:focused {
+    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.3), 10, 0, 0, 0);
+}
+
+.text-field:focused {
+    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.2), 8, 0, 0, 0);
+}

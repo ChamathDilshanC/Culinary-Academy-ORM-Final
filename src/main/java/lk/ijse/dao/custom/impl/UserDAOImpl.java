@@ -245,10 +245,9 @@ public class UserDAOImpl implements UserDAO {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
             Query<Integer> query = session.createQuery(
-                    "SELECT u.userId FROM User u ORDER BY u.userId DESC",
+                    "SELECT MAX(u.userId) FROM User u",
                     Integer.class
             );
-            query.setMaxResults(1);
             Integer currentId = query.uniqueResult();
             return (currentId == null) ? 0 : currentId;
         } catch (Exception e) {

@@ -3,38 +3,39 @@ package lk.ijse.util;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
-import java.util.regex.Pattern;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class ValidationUtil {
 
-    // Regular Expression Patterns
     private static final Map<ValidationField, Pattern> PATTERNS = new HashMap<>();
     static {
-        PATTERNS.put(ValidationField.NAME,
-                Pattern.compile("^[A-Za-z]{2,}(?: [A-Za-z]+)*$"));
-        PATTERNS.put(ValidationField.EMAIL,
-                Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"));
-        PATTERNS.put(ValidationField.PHONE,
-                Pattern.compile("^(?:0|\\+94|94)?[0-9]{9,10}$"));
-        PATTERNS.put(ValidationField.ADDRESS,
-                Pattern.compile("^[A-Za-z0-9\\s,./-]{5,100}$"));
-        PATTERNS.put(ValidationField.NIC,
-                Pattern.compile("^([0-9]{9}[vVxX]|[0-9]{12})$"));
-        PATTERNS.put(ValidationField.STUDENT_ID,
-                Pattern.compile("^STU\\d{4}$"));
-        PATTERNS.put(ValidationField.PROGRAM_ID,
-                Pattern.compile("^CA\\d{4}$"));
-        PATTERNS.put(ValidationField.PASSWORD,
-                Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$"));
+        PATTERNS.put(ValidationField.NAME, Pattern.compile("^[A-Za-z]{2,}(?: [A-Za-z]+)*$"));
+        PATTERNS.put(ValidationField.EMAIL, Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"));
+        PATTERNS.put(ValidationField.PHONE, Pattern.compile("^(?:0|\\+94|94)?[0-9]{9,10}$"));
+        PATTERNS.put(ValidationField.ADDRESS, Pattern.compile("^[A-Za-z0-9\\s,./-]{5,100}$"));
+        PATTERNS.put(ValidationField.NIC, Pattern.compile("^([0-9]{9}[vVxX]|[0-9]{12})$"));
+        PATTERNS.put(ValidationField.STUDENT_ID, Pattern.compile("^STU\\d{4}$"));
+        PATTERNS.put(ValidationField.PROGRAM_ID, Pattern.compile("^CA\\d{4}$"));
+        PATTERNS.put(ValidationField.PASSWORD, Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$"));
     }
 
-    // Validation Fields Enum
+    // SVG paths for success and error icons
+    private static final String CHECK_MARK_PATH = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
+    private static final String ERROR_MARK_PATH = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z";
+
     public enum ValidationField {
         NAME("Name", "Must be at least 2 characters and contain only letters and spaces"),
         EMAIL("Email", "Must be a valid email address"),
@@ -57,7 +58,69 @@ public class ValidationUtil {
         public String getDescription() { return description; }
     }
 
-    // Validation Result Class
+    public static class ValidationContainer extends VBox {
+        private final TextField textField;
+        private final HBox feedbackContainer;
+        private final Label messageLabel;
+        private final SVGPath iconPath;
+        private final StackPane iconContainer;
+
+        public ValidationContainer(TextField textField) {
+            this.textField = textField;
+            this.setSpacing(4);
+
+            // Create feedback container
+            feedbackContainer = new HBox();
+            feedbackContainer.setSpacing(8);
+            feedbackContainer.setAlignment(Pos.CENTER_LEFT);
+            feedbackContainer.setVisible(false);
+            feedbackContainer.setManaged(false);  // Changed from setManageableState to setManaged
+
+            // Create message label
+            messageLabel = new Label();
+            messageLabel.getStyleClass().add("validation-message");
+
+            // Create icon
+            iconPath = new SVGPath();
+            iconContainer = new StackPane(iconPath);
+            iconContainer.setMinSize(16, 16);
+            iconContainer.setMaxSize(16, 16);
+
+            // Add components to feedback container
+            feedbackContainer.getChildren().addAll(iconContainer, messageLabel);
+
+            // Add text field and feedback container to VBox
+            getChildren().addAll(textField, feedbackContainer);
+        }
+
+        public TextField getTextField() { return textField; }
+        public Label getMessageLabel() { return messageLabel; }
+        public SVGPath getIconPath() { return iconPath; }
+        public HBox getFeedbackContainer() { return feedbackContainer; }
+    }
+
+    public static ValidationContainer createValidationContainer(TextField textField, ValidationField validationType) {
+        ValidationContainer container = new ValidationContainer(textField);
+        setupValidation(container, validationType);
+        return container;
+    }
+
+    public static void setupValidation(ValidationContainer container, ValidationField validationType) {
+        TextField field = container.getTextField();
+
+        field.textProperty().addListener((obs, oldValue, newValue) -> {
+            ValidationResult result = validate(newValue, validationType);
+            showValidationResult(container, result);
+        });
+
+        field.focusedProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue && !field.getText().isEmpty()) {
+                ValidationResult result = validate(field.getText(), validationType);
+                showValidationResult(container, result);
+            }
+        });
+    }
+
     public static class ValidationResult {
         private final boolean valid;
         private final String message;
@@ -74,7 +137,6 @@ public class ValidationUtil {
         public ValidationField getField() { return field; }
     }
 
-    // Main Validation Methods
     public static ValidationResult validate(String value, ValidationField field) {
         if (value == null || value.trim().isEmpty()) {
             return new ValidationResult(false, field.getFieldName() + " is required", field);
@@ -93,86 +155,70 @@ public class ValidationUtil {
         );
     }
 
-    // UI Validation Methods
-    public static void setupValidation(TextField field, Label errorLabel, ValidationField validationType) {
-        field.textProperty().addListener((obs, oldValue, newValue) -> {
-            ValidationResult result = validate(newValue, validationType);
-            showValidationResult(field, errorLabel, result);
-        });
+    private static void showValidationResult(ValidationContainer container, ValidationResult result) {
+        TextField field = container.getTextField();
+        Label messageLabel = container.getMessageLabel();
+        SVGPath iconPath = container.getIconPath();
+        HBox feedbackContainer = container.getFeedbackContainer();
 
-        // Add focus listeners for enhanced UX
-        field.focusedProperty().addListener((obs, oldValue, newValue) -> {
-            if (!newValue && !field.getText().isEmpty()) {  // On focus lost
-                ValidationResult result = validate(field.getText(), validationType);
-                showValidationResult(field, errorLabel, result);
-            }
-        });
-    }
-
-    public static void showValidationResult(TextField field, Label errorLabel, ValidationResult result) {
-        if (!result.isValid()) {
-            showError(field, errorLabel, result.getMessage());
+        if (result.isValid()) {
+            // Show success state
+            messageLabel.setText(result.getMessage());
+            messageLabel.setTextFill(Color.GREEN);
+            iconPath.setContent(CHECK_MARK_PATH);
+            iconPath.setFill(Color.GREEN);
+            field.getStyleClass().remove("field-error");
+            field.getStyleClass().add("field-success");
         } else {
-            hideError(field, errorLabel);
+            // Show error state
+            messageLabel.setText(result.getMessage());
+            messageLabel.setTextFill(Color.RED);
+            iconPath.setContent(ERROR_MARK_PATH);
+            iconPath.setFill(Color.RED);
+            field.getStyleClass().remove("field-success");
+            field.getStyleClass().add("field-error");
         }
-    }
 
-    // Animation Methods
-    public static void showError(TextField field, Label errorLabel, String message) {
-        errorLabel.setText(message);
-
-        if (!errorLabel.isVisible()) {
-            // Setup animations
+        // Show feedback with animation if not already visible
+        if (!feedbackContainer.isVisible()) {
             ParallelTransition parallel = new ParallelTransition();
 
-            // Fade in animation
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(200), errorLabel);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(200), feedbackContainer);
             fadeIn.setFromValue(0);
             fadeIn.setToValue(1);
 
-            // Slide down animation
-            TranslateTransition slideDown = new TranslateTransition(Duration.millis(200), errorLabel);
+            TranslateTransition slideDown = new TranslateTransition(Duration.millis(200), feedbackContainer);
             slideDown.setFromY(-10);
             slideDown.setToY(0);
 
             parallel.getChildren().addAll(fadeIn, slideDown);
 
-            // Show error label and play animation
-            errorLabel.setVisible(true);
+            feedbackContainer.setVisible(true);
+            feedbackContainer.setManaged(true);  // Changed from setManageableState to setManaged
             parallel.play();
         }
-
-        field.getStyleClass().add("field-error");
     }
 
-    public static void hideError(TextField field, Label errorLabel) {
-        if (errorLabel.isVisible()) {
-            // Setup fade out animation
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(200), errorLabel);
-            fadeOut.setFromValue(1);
-            fadeOut.setToValue(0);
-            fadeOut.setOnFinished(e -> errorLabel.setVisible(false));
-            fadeOut.play();
+    // CSS styles to be added to your stylesheet
+    private static final String CSS_STYLES = """
+        .field-error {
+            -fx-border-color: #ff0000;
+            -fx-border-width: 1px;
+            -fx-border-radius: 4px;
         }
+        
+        .field-success {
+            -fx-border-color: #00ff00;
+            -fx-border-width: 1px;
+            -fx-border-radius: 4px;
+        }
+        
+        .validation-message {
+            -fx-font-size: 12px;
+        }
+    """;
 
-        field.getStyleClass().remove("field-error");
-    }
-
-    // Utility Methods
-    public static String sanitize(String input) {
-        if (input == null) return "";
-        return input.trim().replaceAll("[<>\"']", "");
-    }
-
-    public static boolean isNullOrEmpty(String value) {
-        return value == null || value.trim().isEmpty();
-    }
-
-    public static boolean containsScript(String input) {
-        if (input == null) return false;
-        return input.toLowerCase().contains("<script") ||
-                input.toLowerCase().contains("javascript:") ||
-                input.toLowerCase().contains("onerror=") ||
-                input.toLowerCase().contains("onload=");
+    public static String getDefaultStyles() {
+        return CSS_STYLES;
     }
 }

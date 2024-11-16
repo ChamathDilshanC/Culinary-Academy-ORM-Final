@@ -39,7 +39,7 @@ public class User {
     private List<Student> students = new ArrayList<>();
 
     public enum Role {
-        ADMIN, STAFF
+        ADMIN, COORDINATOR
     }
 
     // Getters and Setters

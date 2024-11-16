@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="0" stylesheets="@/styles/UserManagement.css" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="lk.ijse.controller.UserFormController">
+
+    <!-- Main Content -->
+    <VBox styleClass="main-content" VBox.vgrow="ALWAYS">
+        <!-- Header -->
+        <VBox styleClass="content-header">
+            <Label text="User Management" styleClass="page-title"/>
+            <Label text="Manage user accounts and permissions" styleClass="page-subtitle"/>
+        </VBox>
+
+        <!-- Form Container -->
+        <VBox fx:id="formContainer" styleClass="form-container">
+            <GridPane hgap="20" vgap="15">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+
+                <!-- Left Column -->
+                <VBox spacing="15" GridPane.columnIndex="0">
+                    <Label text="User ID" styleClass="field-label"/>
+                    <TextField fx:id="txtUserId" styleClass="text-field" editable="false"/>
+
+                    <Label text="Username" styleClass="field-label"/>
+                    <TextField fx:id="txtUsername"
+                               styleClass="text-field"
+                               promptText="Enter username"
+                               onKeyReleased="#validateField"/>
+
+                    <Label text="Password" styleClass="field-label"/>
+                    <VBox spacing="5">
+                        <StackPane>
+                            <PasswordField fx:id="txtPassword"
+                                           styleClass="text-field"
+                                           promptText="Enter password"
+                                           onKeyReleased="#validateField"/>
+                            <TextField fx:id="txtPasswordVisible"
+                                       styleClass="text-field"
+                                       promptText="Enter password"
+                                       onKeyReleased="#validateField"
+                                       visible="false"
+                                       managed="false"/>
+                        </StackPane>
+                        <CheckBox fx:id="chkShowPassword"
+                                  text="Show password"
+                                  styleClass="show-password-checkbox"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Right Column -->
+                <VBox spacing="15" GridPane.columnIndex="1">
+                    <Label text="Email" styleClass="field-label"/>
+                    <TextField fx:id="txtEmail"
+                               styleClass="text-field"
+                               promptText="example@email.com"
+                               onKeyReleased="#validateField"/>
+
+                    <Label text="Role" styleClass="field-label"/>
+                    <ComboBox fx:id="cmbRole"
+                              styleClass="combo-box"
+                              promptText="Select role"/>
+
+                    <Label text="Last Login" styleClass="field-label"/>
+                    <Label fx:id="lblLastLogin"
+                           text="Never logged in"
+                           styleClass="status-label"/>
+                </VBox>
+            </GridPane>
+
+            <!-- Form Buttons -->
+            <HBox spacing="10" styleClass="form-buttons">
+                <Button fx:id="btnClear"
+                        text="Clear"
+                        styleClass="button, clear-button"
+                        onAction="#btnClearOnAction"/>
+                <Button fx:id="btnSave"
+                        text="Save"
+                        styleClass="button, save-button"
+                        onAction="#btnSaveOnAction"/>
+                <Button fx:id="btnUpdate"
+                        text="Update"
+                        styleClass="button, edit-button"
+                        onAction="#btnUpdateOnAction"/>
+                <Button fx:id="btnDelete"
+                        text="Delete"
+                        styleClass="button, delete-button"
+                        onAction="#btnDeleteOnAction"/>
+            </HBox>
+        </VBox>
+
+        <!-- Search and Controls -->
+        <HBox styleClass="search-container">
+            <TextField fx:id="txtSearch"
+                       promptText="Search users..."
+                       styleClass="search-field"
+                       HBox.hgrow="ALWAYS"
+                       onKeyReleased="#handleSearch"/>
+            <Button fx:id="btnShowHideForm"
+                    text="Hide Form"
+                    styleClass="button, hide-form-button"
+                    onAction="#btnShowHideFormOnAction"/>
+        </HBox>
+
+        <!-- Table -->
+        <TableView fx:id="tblUser" styleClass="user-table" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colUserId" text="ID" prefWidth="100"/>
+                <TableColumn fx:id="colUsername" text="Username" prefWidth="150"/>
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="200"/>
+                <TableColumn fx:id="colRole" text="Role" prefWidth="120"/>
+                <TableColumn fx:id="colLastLogin" text="Last Login" prefWidth="150"/>
+                <TableColumn fx:id="colActions" text="Actions" prefWidth="150"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+
+        <!-- Status Bar -->
+        <HBox styleClass="status-bar">
+            <Label fx:id="totalUsersLabel" text="Total Users: 0"/>
+        </HBox>
+    </VBox>
+</VBox>
