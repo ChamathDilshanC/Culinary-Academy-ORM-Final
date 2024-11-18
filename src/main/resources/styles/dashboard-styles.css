@@ -14,7 +14,7 @@
 
 /* Spacer to push bottom buttons down */
 .spacer {
-    -fx-min-height: 200px; /* Adjust this value to push buttons lower */
+    -fx-min-height: 20px; /* Adjust this value to push buttons lower */
 }
 
 .logo-container {

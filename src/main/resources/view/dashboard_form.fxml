@@ -49,6 +49,8 @@
                             <Label fx:id="userRole" text="Administrator" styleClass="user-role"/>
                         </VBox>
                     </HBox>
+                    <!-- ADD A BOTTOM GAP -->
+                    <VBox styleClass="spacer"/>
                     <Label fx:id="timeLabel" styleClass="time-label"/>
                     <Label fx:id="dateLabel" styleClass="date-label"/>
                 </VBox>
