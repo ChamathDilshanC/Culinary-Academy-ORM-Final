@@ -48,6 +48,14 @@ public class UserFormController implements Initializable {
     @FXML private Button btnShowHideForm;
     @FXML private Label totalUsersLabel;
 
+    // Validation UI elements
+    @FXML private Label lblUsernameValidation;
+    @FXML private Label lblEmailValidation;
+    @FXML private Label lblPasswordValidation;
+    @FXML private HBox usernameValidationContainer;
+    @FXML private HBox emailValidationContainer;
+    @FXML private HBox passwordValidationContainer;
+
     private final UserBO userBO = (UserBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.USER);
     private final ObservableList<UserDTO> userList = FXCollections.observableArrayList();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -63,10 +71,11 @@ public class UserFormController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Platform.runLater(() -> {
             setupUI();
-            setupValidation();
             setupTable();
             loadUsers();
             updateTotalUsers();
+            setupValidation();
+
             try {
                 generateNewId();
             } catch (Exception e) {
@@ -89,6 +98,18 @@ public class UserFormController implements Initializable {
 
         // Setup search functionality
         setupSearch();
+
+        // Initialize validation containers
+        initializeValidationContainers();
+    }
+
+    private void initializeValidationContainers() {
+        usernameValidationContainer.setManaged(false);
+        usernameValidationContainer.setVisible(false);
+        emailValidationContainer.setManaged(false);
+        emailValidationContainer.setVisible(false);
+        passwordValidationContainer.setManaged(false);
+        passwordValidationContainer.setVisible(false);
     }
 
     private void setupPasswordToggle() {
@@ -106,54 +127,89 @@ public class UserFormController implements Initializable {
                 txtPasswordVisible.setVisible(false);
                 txtPasswordVisible.setManaged(false);
             }
+            validateField();
         });
 
         // Sync password fields
         txtPassword.textProperty().addListener((obs, old, newVal) -> {
             if (!chkShowPassword.isSelected()) {
                 txtPasswordVisible.setText(newVal);
+                validateField();
             }
         });
 
         txtPasswordVisible.textProperty().addListener((obs, old, newVal) -> {
             if (chkShowPassword.isSelected()) {
                 txtPassword.setText(newVal);
+                validateField();
             }
         });
     }
 
     private void setupValidation() {
-        // Username validation
-        setupFieldValidation(txtUsername, USERNAME_PATTERN,
-                "Username must be 4-20 characters and can contain letters, numbers, and underscores");
-
-        // Email validation
-        setupFieldValidation(txtEmail, EMAIL_PATTERN,
-                "Please enter a valid email address");
-
-        // Password validation
-        setupFieldValidation(txtPassword, PASSWORD_PATTERN,
-                "Password must have 8+ chars, including uppercase, lowercase, numbers, and special chars");
-        setupFieldValidation(txtPasswordVisible, PASSWORD_PATTERN,
-                "Password must have 8+ chars, including uppercase, lowercase, numbers, and special chars");
+        // Add listeners for real-time validation
+        txtUsername.textProperty().addListener((obs, old, newVal) -> validateField());
+        txtEmail.textProperty().addListener((obs, old, newVal) -> validateField());
+        txtPassword.textProperty().addListener((obs, old, newVal) -> validateField());
+        txtPasswordVisible.textProperty().addListener((obs, old, newVal) -> validateField());
     }
 
-    private void setupFieldValidation(TextField field, Pattern pattern, String errorMessage) {
-        field.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && !newVal.isEmpty()) {
-                boolean isValid = pattern.matcher(newVal).matches();
-                field.setStyle(isValid ? "" : "-fx-border-color: red;");
+    @FXML
+    private void validateField() {
+        boolean isValid = true;
 
-                if (!isValid) {
-                    field.setTooltip(new Tooltip(errorMessage));
-                } else {
-                    field.setTooltip(null);
-                }
-            } else {
-                field.setStyle("");
-                field.setTooltip(null);
-            }
-        });
+        // Validate username
+        if (!txtUsername.getText().isEmpty()) {
+            boolean usernameValid = USERNAME_PATTERN.matcher(txtUsername.getText()).matches();
+            isValid &= usernameValid;
+            updateFieldValidation(txtUsername, lblUsernameValidation, usernameValidationContainer,
+                    usernameValid, "Username must be 4-20 characters and can contain letters, numbers, and underscores");
+        } else {
+            resetFieldValidation(txtUsername, lblUsernameValidation, usernameValidationContainer);
+        }
+
+        // Validate email
+        if (!txtEmail.getText().isEmpty()) {
+            boolean emailValid = EMAIL_PATTERN.matcher(txtEmail.getText()).matches();
+            isValid &= emailValid;
+            updateFieldValidation(txtEmail, lblEmailValidation, emailValidationContainer,
+                    emailValid, "Please enter a valid email address");
+        } else {
+            resetFieldValidation(txtEmail, lblEmailValidation, emailValidationContainer);
+        }
+
+        // Validate password
+        String passwordText = chkShowPassword.isSelected() ? txtPasswordVisible.getText() : txtPassword.getText();
+        if (!passwordText.isEmpty()) {
+            boolean passwordValid = PASSWORD_PATTERN.matcher(passwordText).matches();
+            isValid &= passwordValid;
+            TextField activePasswordField = chkShowPassword.isSelected() ? txtPasswordVisible : txtPassword;
+            updateFieldValidation(activePasswordField, lblPasswordValidation, passwordValidationContainer,
+                    passwordValid, "Password must have 8+ chars, including uppercase, lowercase, numbers, and special chars");
+        } else {
+            resetFieldValidation(txtPassword, lblPasswordValidation, passwordValidationContainer);
+            resetFieldValidation(txtPasswordVisible, lblPasswordValidation, passwordValidationContainer);
+        }
+
+        // Update save button state
+        btnSave.setDisable(!isValid);
+    }
+
+    private void updateFieldValidation(TextField field, Label validationLabel,
+                                       HBox validationContainer, boolean isValid, String errorMessage) {
+        field.getStyleClass().removeAll("error", "valid");
+        field.getStyleClass().add(isValid ? "valid" : "error");
+
+        validationContainer.setManaged(!isValid);
+        validationContainer.setVisible(!isValid);
+        validationLabel.setText(isValid ? "" : errorMessage);
+    }
+
+    private void resetFieldValidation(TextField field, Label validationLabel, HBox validationContainer) {
+        field.getStyleClass().removeAll("error", "valid");
+        validationContainer.setManaged(false);
+        validationContainer.setVisible(false);
+        validationLabel.setText("");
     }
 
     private void setupTable() {
@@ -167,7 +223,6 @@ public class UserFormController implements Initializable {
             return new SimpleStringProperty(lastLogin != null ? lastLogin.format(formatter) : "Never");
         });
 
-        // Setup action column
         setupActionColumn();
 
         // Row selection handler
@@ -262,6 +317,8 @@ public class UserFormController implements Initializable {
 
         LocalDateTime lastLogin = user.getLastLogin();
         lblLastLogin.setText("Last Login: " + (lastLogin != null ? lastLogin.format(formatter) : "Never"));
+
+        validateField(); // Validate fields after populating
     }
 
     @FXML
@@ -299,6 +356,7 @@ public class UserFormController implements Initializable {
                 showAlert(Alert.AlertType.INFORMATION, "Success", "User saved successfully!");
                 clearFields();
                 loadUsers();
+                generateNewId();
             }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to save user", e.getMessage());
@@ -306,7 +364,7 @@ public class UserFormController implements Initializable {
     }
 
     @FXML
-    private void btnUpdateOnAction() {
+    private void btnUpdateOnAction() throws Exception {
         if (!validateInputs(true)) return;
 
         try {
@@ -336,6 +394,7 @@ public class UserFormController implements Initializable {
                 showAlert(Alert.AlertType.INFORMATION, "Success", "User updated successfully!");
                 clearFields();
                 loadUsers();
+                generateNewId();
             }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to update user", e.getMessage());
@@ -390,12 +449,19 @@ public class UserFormController implements Initializable {
         btnUpdate.setDisable(true);
         btnDelete.setDisable(true);
 
+        // Reset validation states
+        resetFieldValidation(txtUsername, lblUsernameValidation, usernameValidationContainer);
+        resetFieldValidation(txtEmail, lblEmailValidation, emailValidationContainer);
+        resetFieldValidation(txtPassword, lblPasswordValidation, passwordValidationContainer);
+        resetFieldValidation(txtPasswordVisible, lblPasswordValidation, passwordValidationContainer);
+
         tblUser.getSelectionModel().clearSelection();
 
-        txtUsername.setStyle("");
-        txtEmail.setStyle("");
-        txtPassword.setStyle("");
-        txtPasswordVisible.setStyle("");
+        try {
+            generateNewId();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean validateInputs() {
@@ -407,20 +473,35 @@ public class UserFormController implements Initializable {
 
         if (txtUsername.getText().isEmpty()) {
             errors.append("Username is required\n");
+            updateFieldValidation(txtUsername, lblUsernameValidation, usernameValidationContainer,
+                    false, "Username is required");
         } else if (!USERNAME_PATTERN.matcher(txtUsername.getText()).matches()) {
             errors.append("Invalid username format\n");
+            updateFieldValidation(txtUsername, lblUsernameValidation, usernameValidationContainer,
+                    false, "Username must be 4-20 characters and can contain letters, numbers, and underscores");
         }
 
         if (txtEmail.getText().isEmpty()) {
             errors.append("Email is required\n");
+            updateFieldValidation(txtEmail, lblEmailValidation, emailValidationContainer,
+                    false, "Email is required");
         } else if (!EMAIL_PATTERN.matcher(txtEmail.getText()).matches()) {
             errors.append("Invalid email format\n");
+            updateFieldValidation(txtEmail, lblEmailValidation, emailValidationContainer,
+                    false, "Please enter a valid email address");
         }
 
-        if (!isUpdate && txtPassword.getText().isEmpty()) {
+        String passwordText = chkShowPassword.isSelected() ? txtPasswordVisible.getText() : txtPassword.getText();
+        if (!isUpdate && passwordText.isEmpty()) {
             errors.append("Password is required\n");
-        } else if (!txtPassword.getText().isEmpty() && !PASSWORD_PATTERN.matcher(txtPassword.getText()).matches()) {
+            updateFieldValidation(chkShowPassword.isSelected() ? txtPasswordVisible : txtPassword,
+                    lblPasswordValidation, passwordValidationContainer,
+                    false, "Password is required");
+        } else if (!passwordText.isEmpty() && !PASSWORD_PATTERN.matcher(passwordText).matches()) {
             errors.append("Invalid password format\n");
+            updateFieldValidation(chkShowPassword.isSelected() ? txtPasswordVisible : txtPassword,
+                    lblPasswordValidation, passwordValidationContainer,
+                    false, "Password must have 8+ chars, including uppercase, lowercase, numbers, and special chars");
         }
 
         if (cmbRole.getValue() == null) {
@@ -433,76 +514,6 @@ public class UserFormController implements Initializable {
         }
 
         return true;
-    }
-
-    @FXML
-    private void validateField() {
-        boolean isValid = true;
-        StringBuilder message = new StringBuilder();
-
-        // Validate username
-        if (!txtUsername.getText().isEmpty() && !USERNAME_PATTERN.matcher(txtUsername.getText()).matches()) {
-            isValid = false;
-            message.append("Invalid username format\n");
-            txtUsername.setStyle("-fx-border-color: red;");
-        } else {
-            txtUsername.setStyle("");
-        }
-
-        // Validate email
-        if (!txtEmail.getText().isEmpty() && !EMAIL_PATTERN.matcher(txtEmail.getText()).matches()) {
-            isValid = false;
-            message.append("Invalid email format\n");
-            txtEmail.setStyle("-fx-border-color: red;");
-        } else {
-            txtEmail.setStyle("");
-        }
-
-        // Validate password
-        String passwordText = chkShowPassword.isSelected() ? txtPasswordVisible.getText() : txtPassword.getText();
-        if (!passwordText.isEmpty() && !PASSWORD_PATTERN.matcher(passwordText).matches()) {
-            isValid = false;
-            message.append("Invalid password format\n");
-            if (chkShowPassword.isSelected()) {
-                txtPasswordVisible.setStyle("-fx-border-color: red;");
-            } else {
-                txtPassword.setStyle("-fx-border-color: red;");
-            }
-        } else {
-            txtPassword.setStyle("");
-            txtPasswordVisible.setStyle("");
-        }
-
-        // Update save button state
-        btnSave.setDisable(!isValid);
-
-        // Show validation message if there are errors
-        if (!isValid) {
-            showValidationMessage(message.toString());
-        }
-    }
-
-    private void showValidationMessage(String message) {
-        Tooltip tooltip = new Tooltip(message);
-        tooltip.setStyle("-fx-background-color: #FF6B6B; -fx-text-fill: white;");
-        tooltip.setAutoHide(true);
-
-        if (!txtUsername.getText().isEmpty() && !USERNAME_PATTERN.matcher(txtUsername.getText()).matches()) {
-            txtUsername.setTooltip(tooltip);
-        }
-
-        if (!txtEmail.getText().isEmpty() && !EMAIL_PATTERN.matcher(txtEmail.getText()).matches()) {
-            txtEmail.setTooltip(tooltip);
-        }
-
-        String passwordText = chkShowPassword.isSelected() ? txtPasswordVisible.getText() : txtPassword.getText();
-        if (!passwordText.isEmpty() && !PASSWORD_PATTERN.matcher(passwordText).matches()) {
-            if (chkShowPassword.isSelected()) {
-                txtPasswordVisible.setTooltip(tooltip);
-            } else {
-                txtPassword.setTooltip(tooltip);
-            }
-        }
     }
 
     private void showAlert(Alert.AlertType type, String title, String content) {
@@ -538,6 +549,12 @@ public class UserFormController implements Initializable {
         dialogPane.getStyleClass().add("custom-alert");
     }
 
+    private void generateNewId() throws Exception {
+        Integer currentId = userBO.getCurrentId();
+        currentId = currentId != 0 ? currentId + 1 : 1;
+        txtUserId.setText(currentId.toString());
+    }
+
     // Utility methods for user operations
     public void updateLastLoginForUser(Integer userId) {
         try {
@@ -545,7 +562,7 @@ public class UserFormController implements Initializable {
             if (user != null) {
                 user.setLastLogin(LocalDateTime.now());
                 userBO.updateUser(user);
-                loadUsers(); // Refresh the table to show updated last login time
+                loadUsers();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -578,7 +595,6 @@ public class UserFormController implements Initializable {
         return false;
     }
 
-    // Additional utility methods
     public void filterByRole(Role role) {
         try {
             if (role == null) {
@@ -610,12 +626,5 @@ public class UserFormController implements Initializable {
             tblUser.setItems(filteredList);
         }
         updateTotalUsers();
-    }
-
-    private  void generateNewId() throws Exception {
-        Integer currentId = userBO.getCurrentId();
-        currentId = currentId != 0 ? currentId + 1 : 1;
-        txtUserId.setText(currentId.toString());
-
     }
 }

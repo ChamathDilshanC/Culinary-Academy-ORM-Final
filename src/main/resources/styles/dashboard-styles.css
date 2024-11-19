@@ -9,12 +9,12 @@
     -fx-min-width: 250px;
     -fx-pref-width: 250px;
     -fx-max-width: 250px;
-    -fx-min-height: 768px; /* Set minimum height */
+    -fx-min-height: 768px;
 }
 
 /* Spacer to push bottom buttons down */
 .spacer {
-    -fx-min-height: 20px; /* Adjust this value to push buttons lower */
+    -fx-min-height: 20px;
 }
 
 .logo-container {

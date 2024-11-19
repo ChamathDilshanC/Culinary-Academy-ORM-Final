@@ -7,7 +7,6 @@
 <VBox spacing="0" stylesheets="@/styles/UserManagement.css" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="lk.ijse.controller.UserFormController">
 
-    <!-- Main Content -->
     <VBox styleClass="main-content" VBox.vgrow="ALWAYS">
         <!-- Header -->
         <VBox styleClass="content-header">
@@ -25,52 +24,77 @@
 
                 <!-- Left Column -->
                 <VBox spacing="15" GridPane.columnIndex="0">
-                    <Label text="User ID" styleClass="field-label"/>
-                    <TextField fx:id="txtUserId" styleClass="text-field" editable="false"/>
-
-                    <Label text="Username" styleClass="field-label"/>
-                    <TextField fx:id="txtUsername"
-                               styleClass="text-field"
-                               promptText="Enter username"
-                               onKeyReleased="#validateField"/>
-
-                    <Label text="Password" styleClass="field-label"/>
                     <VBox spacing="5">
-                        <StackPane>
-                            <PasswordField fx:id="txtPassword"
+                        <Label text="User ID" styleClass="field-label"/>
+                        <TextField fx:id="txtUserId" styleClass="text-field" editable="false"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Username" styleClass="field-label"/>
+                        <VBox>
+                            <TextField fx:id="txtUsername"
+                                       styleClass="text-field"
+                                       promptText="Enter username"
+                                       onKeyReleased="#validateField"/>
+                            <HBox fx:id="usernameValidationContainer" styleClass="validation-container">
+                                <Label fx:id="lblUsernameValidation" styleClass="validation-label"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Password" styleClass="field-label"/>
+                        <VBox>
+                            <StackPane>
+                                <PasswordField fx:id="txtPassword"
+                                               styleClass="text-field"
+                                               promptText="Enter password"
+                                               onKeyReleased="#validateField"/>
+                                <TextField fx:id="txtPasswordVisible"
                                            styleClass="text-field"
                                            promptText="Enter password"
-                                           onKeyReleased="#validateField"/>
-                            <TextField fx:id="txtPasswordVisible"
-                                       styleClass="text-field"
-                                       promptText="Enter password"
-                                       onKeyReleased="#validateField"
-                                       visible="false"
-                                       managed="false"/>
-                        </StackPane>
-                        <CheckBox fx:id="chkShowPassword"
-                                  text="Show password"
-                                  styleClass="show-password-checkbox"/>
+                                           onKeyReleased="#validateField"
+                                           visible="false"
+                                           managed="false"/>
+                            </StackPane>
+                            <HBox fx:id="passwordValidationContainer" styleClass="validation-container">
+                                <Label fx:id="lblPasswordValidation" styleClass="validation-label"/>
+                            </HBox>
+                            <CheckBox fx:id="chkShowPassword"
+                                      text="Show password"
+                                      styleClass="show-password-checkbox"/>
+                        </VBox>
                     </VBox>
                 </VBox>
 
                 <!-- Right Column -->
                 <VBox spacing="15" GridPane.columnIndex="1">
-                    <Label text="Email" styleClass="field-label"/>
-                    <TextField fx:id="txtEmail"
-                               styleClass="text-field"
-                               promptText="example@email.com"
-                               onKeyReleased="#validateField"/>
+                    <VBox spacing="5">
+                        <Label text="Email" styleClass="field-label"/>
+                        <VBox>
+                            <TextField fx:id="txtEmail"
+                                       styleClass="text-field"
+                                       promptText="example@email.com"
+                                       onKeyReleased="#validateField"/>
+                            <HBox fx:id="emailValidationContainer" styleClass="validation-container">
+                                <Label fx:id="lblEmailValidation" styleClass="validation-label"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
 
-                    <Label text="Role" styleClass="field-label"/>
-                    <ComboBox fx:id="cmbRole"
-                              styleClass="combo-box"
-                              promptText="Select role"/>
+                    <VBox spacing="5">
+                        <Label text="Role" styleClass="field-label"/>
+                        <ComboBox fx:id="cmbRole"
+                                  styleClass="combo-box"
+                                  promptText="Select role"/>
+                    </VBox>
 
-                    <Label text="Last Login" styleClass="field-label"/>
-                    <Label fx:id="lblLastLogin"
-                           text="Never logged in"
-                           styleClass="status-label"/>
+                    <VBox spacing="5">
+                        <Label text="Last Login" styleClass="field-label"/>
+                        <Label fx:id="lblLastLogin"
+                               text="Never logged in"
+                               styleClass="status-label"/>
+                    </VBox>
                 </VBox>
             </GridPane>
 
@@ -100,8 +124,7 @@
             <TextField fx:id="txtSearch"
                        promptText="Search users..."
                        styleClass="search-field"
-                       HBox.hgrow="ALWAYS"
-                       onKeyReleased="#handleSearch"/>
+                       HBox.hgrow="ALWAYS"/>
             <Button fx:id="btnShowHideForm"
                     text="Hide Form"
                     styleClass="button, hide-form-button"
@@ -128,4 +151,8 @@
             <Label fx:id="totalUsersLabel" text="Total Users: 0"/>
         </HBox>
     </VBox>
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 </VBox>
