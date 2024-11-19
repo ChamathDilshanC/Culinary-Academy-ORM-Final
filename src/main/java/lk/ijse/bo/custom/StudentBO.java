@@ -11,7 +11,6 @@ public interface StudentBO extends SuperBO {
     boolean deleteStudent(String id) throws Exception;
     StudentDTO searchStudent(String id) throws Exception;
     List<StudentDTO> getAllStudents() throws Exception;
-    StudentDTO searchStudentByEmail(String email) throws Exception;
     boolean existsByEmail(String email) throws Exception;
-    List<StudentDTO> getStudentsByUserId(Integer userId) throws Exception;
+    boolean existsByPhone(String phone) throws Exception;
 }

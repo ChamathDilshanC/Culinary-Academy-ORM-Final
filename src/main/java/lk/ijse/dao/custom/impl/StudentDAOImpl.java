@@ -89,20 +89,6 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
-    public Student searchByEmail(String email) throws Exception {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        try {
-            Query<Student> query = session.createQuery("FROM Student WHERE email = :email", Student.class);
-            query.setParameter("email", email);
-            return query.uniqueResult();
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            session.close();
-        }
-    }
-
-    @Override
     public boolean existsByEmail(String email) throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
@@ -117,12 +103,12 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
-    public List<Student> getStudentsByUserId(Integer userId) throws Exception {
+    public boolean existsByPhone(String phone) throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
-            Query<Student> query = session.createQuery("FROM Student WHERE user.userId = :userId", Student.class);
-            query.setParameter("userId", userId);
-            return query.list();
+            Query<Long> query = session.createQuery("SELECT COUNT(*) FROM Student WHERE phoneNumber = :phone", Long.class);
+            query.setParameter("phone", phone);
+            return query.uniqueResult() > 0;
         } catch (Exception e) {
             throw e;
         } finally {

@@ -72,15 +72,16 @@ public class UserFormController implements Initializable {
         Platform.runLater(() -> {
             setupUI();
             setupTable();
-            loadUsers();
-            updateTotalUsers();
-            setupValidation();
-
             try {
                 generateNewId();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            setupUI();
+            setupTable();
+            loadUsers();
+            updateTotalUsers();
+            setupValidation();
         });
     }
 
@@ -347,7 +348,7 @@ public class UserFormController implements Initializable {
             UserDTO dto = new UserDTO();
             dto.setUsername(txtUsername.getText());
             dto.setPassword(PasswordEncoder.encode(txtPassword.getText()));
-            dto.setEmail(txtEmail.getText());
+            dto.setEmail(txtEmail.getText().toLowerCase());
             dto.setRole(cmbRole.getValue());
             dto.setCreatedAt(LocalDateTime.now());
             dto.setUpdatedAt(LocalDateTime.now());
@@ -386,7 +387,7 @@ public class UserFormController implements Initializable {
             if (!txtPassword.getText().isEmpty()) {
                 dto.setPassword(PasswordEncoder.encode(txtPassword.getText()));
             }
-            dto.setEmail(txtEmail.getText());
+            dto.setEmail(txtEmail.getText().toLowerCase());
             dto.setRole(cmbRole.getValue());
             dto.setUpdatedAt(LocalDateTime.now());
 

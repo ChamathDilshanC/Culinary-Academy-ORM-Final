@@ -45,6 +45,7 @@
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <Circle fx:id="userAvatar" radius="20" styleClass="user-avatar"/>
                         <VBox spacing="2">
+                            <Label fx:id="userId" text="admin" styleClass="user-name"/>
                             <Label fx:id="userName" text="admin" styleClass="user-name"/>
                             <Label fx:id="userRole" text="Administrator" styleClass="user-role"/>
                         </VBox>

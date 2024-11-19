@@ -105,23 +105,6 @@ public class StudentBOImpl implements StudentBO {
         return studentDTOs;
     }
 
-    @Override
-    public StudentDTO searchStudentByEmail(String email) throws Exception {
-        Student student = studentDAO.searchByEmail(email);
-        if (student != null) {
-            return new StudentDTO(
-                    student.getStudentId(),
-                    student.getUser().getUserId(),
-                    student.getFirstName(),
-                    student.getLastName(),
-                    student.getEmail(),
-                    student.getPhoneNumber(),
-                    student.getAddress(),
-                    student.getRegistrationDate()
-            );
-        }
-        return null;
-    }
 
     @Override
     public boolean existsByEmail(String email) throws Exception {
@@ -129,22 +112,8 @@ public class StudentBOImpl implements StudentBO {
     }
 
     @Override
-    public List<StudentDTO> getStudentsByUserId(Integer userId) throws Exception {
-        List<Student> students = studentDAO.getStudentsByUserId(userId);
-        ArrayList<StudentDTO> studentDTOs = new ArrayList<>();
-
-        for (Student student : students) {
-            studentDTOs.add(new StudentDTO(
-                    student.getStudentId(),
-                    student.getUser().getUserId(),
-                    student.getFirstName(),
-                    student.getLastName(),
-                    student.getEmail(),
-                    student.getPhoneNumber(),
-                    student.getAddress(),
-                    student.getRegistrationDate()
-            ));
-        }
-        return studentDTOs;
+    public boolean existsByPhone(String phone) throws Exception {
+        return studentDAO.existsByPhone(phone);
     }
+
 }

@@ -150,6 +150,7 @@ public class DashboardFormController implements Initializable {
 
     @FXML
     public void loadUserManagement() {
+        NotificationUtil.showSuccess("Loaded User Management");
         loadFXML("UserManagement.fxml");
     }
 

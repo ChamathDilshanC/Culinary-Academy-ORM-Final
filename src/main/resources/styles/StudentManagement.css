@@ -12,13 +12,14 @@
     -danger: #ef4444;
 }
 
-/* Main Content */
+/* Main Layout */
 .main-content {
     -fx-background-color: -background;
     -fx-padding: 30;
     -fx-spacing: 20;
 }
 
+/* Header Styles */
 .content-header {
     -fx-spacing: 5;
 }
@@ -34,7 +35,7 @@
     -fx-text-fill: -text-secondary;
 }
 
-/* Form Styles */
+/* Form Container */
 .form-container {
     -fx-background-color: -surface;
     -fx-padding: 25;
@@ -43,6 +44,7 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 1);
 }
 
+/* Form Fields */
 .field-label {
     -fx-font-size: 13px;
     -fx-font-weight: bold;
@@ -61,11 +63,38 @@
 .text-field:focused {
     -fx-border-color: -primary;
     -fx-background-color: -surface;
+    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.2), 8, 0, 0, 0);
 }
 
+.text-field:disabled {
+    -fx-opacity: 0.7;
+}
+
+/* Validation Styles */
+.field-error {
+    -fx-border-color: -danger !important;
+}
+
+.field-success {
+    -fx-border-color: -success !important;
+}
+
+.validation-container {
+    -fx-padding: 4 0 0 0;
+    -fx-spacing: 5;
+    -fx-alignment: center-left;
+}
+
+.validation-label {
+    -fx-text-fill: -danger;
+    -fx-font-size: 12px;
+}
+
+/* Button Container */
 .form-buttons {
     -fx-padding: 20 0 0 0;
     -fx-alignment: CENTER_RIGHT;
+    -fx-spacing: 10;
 }
 
 /* Button Styles */
@@ -76,14 +105,21 @@
     -fx-cursor: hand;
 }
 
-.save-button {
+.button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+}
+
+.button:focused {
+    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.3), 10, 0, 0, 0);
+}
+
+.save-button, .update-button {
     -fx-background-color: -primary;
     -fx-text-fill: white;
 }
 
-.save-button:hover {
+.save-button:hover, .update-button:hover {
     -fx-background-color: -primary-dark;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
 }
 
 .clear-button {
@@ -96,9 +132,19 @@
     -fx-background-color: derive(-background, -5%);
 }
 
+.delete-button {
+    -fx-background-color: -danger;
+    -fx-text-fill: white;
+}
+
+.delete-button:hover {
+    -fx-background-color: derive(-danger, -10%);
+}
+
 /* Search Section */
 .search-container {
     -fx-spacing: 10;
+    -fx-padding: 0 0 10 0;
 }
 
 .search-field {
@@ -121,7 +167,6 @@
 
 .hide-form-button:hover {
     -fx-background-color: -primary-dark;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
 }
 
 /* Table Styles */
@@ -132,6 +177,7 @@
 }
 
 .table-view {
+    -fx-background-color: transparent;
     -fx-border-width: 0;
     -fx-border-color: transparent;
 }
@@ -171,7 +217,6 @@
 
 .table-row-cell:selected {
     -fx-background-color: derive(-primary, 90%);
-    -fx-text-fill: -text-primary;
 }
 
 .table-view .table-cell {
@@ -181,40 +226,36 @@
     -fx-border-color: transparent;
 }
 
-/* Action Buttons in Table */
+/* Table Action Buttons */
 .action-container {
     -fx-spacing: 8;
     -fx-alignment: center;
 }
 
-.edit-button {
+.table-view .edit-button {
     -fx-background-color: -warning;
     -fx-text-fill: white;
     -fx-min-width: 65px;
     -fx-padding: 8 15;
     -fx-background-radius: 4;
-    -fx-cursor: hand;
     -fx-font-size: 12px;
 }
 
-.edit-button:hover {
+.table-view .edit-button:hover {
     -fx-background-color: derive(-warning, -10%);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
 }
 
-.delete-button {
+.table-view .delete-button {
     -fx-background-color: -danger;
     -fx-text-fill: white;
     -fx-min-width: 65px;
     -fx-padding: 8 15;
     -fx-background-radius: 4;
-    -fx-cursor: hand;
     -fx-font-size: 12px;
 }
 
-.delete-button:hover {
+.table-view .delete-button:hover {
     -fx-background-color: derive(-danger, -10%);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
 }
 
 /* Status Bar */
@@ -227,75 +268,53 @@
     -fx-font-size: 13px;
 }
 
-/* Scroll Bar Styling */
-.table-view .scroll-bar:horizontal,
-.table-view .scroll-bar:vertical {
+/* Scroll Bar */
+.scroll-bar:horizontal,
+.scroll-bar:vertical {
     -fx-background-color: transparent;
 }
 
-.table-view .increment-button,
-.table-view .decrement-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-
-.table-view .scroll-bar:horizontal .track,
-.table-view .scroll-bar:vertical .track {
+.increment-button,
+.decrement-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
 
-.table-view .scroll-bar:horizontal .thumb,
-.table-view .scroll-bar:vertical .thumb {
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
     -fx-background-color: #ddd;
     -fx-background-radius: 5em;
 }
 
-.table-view .scroll-bar:horizontal .thumb:hover,
-.table-view .scroll-bar:vertical .thumb:hover {
+.scroll-bar .thumb:hover {
     -fx-background-color: #bbb;
 }
 
-/* Form Validation Styles */
-.field-error {
-    -fx-border-color: -danger !important;
-}
-
-.error-label {
-    -fx-text-fill: -danger;
-    -fx-font-size: 11px;
-    -fx-padding: 4 0 0 0;
-}
-
-.field-success {
-    -fx-border-color: -success !important;
-}
-
-/* Animation Classes */
-.slide-up {
-    -fx-translate-y: -20;
-    -fx-opacity: 0;
-}
-
-.slide-down {
-    -fx-translate-y: 20;
-    -fx-opacity: 0;
-}
-
-/* Placeholder Styling */
-.table-row-cell:empty {
+/* Alert Dialog Styles */
+.custom-alert {
     -fx-background-color: -surface;
 }
 
-.table-row-cell:empty .table-cell {
-    -fx-border-width: 0;
+.custom-alert .header-panel {
+    -fx-background-color: -primary;
 }
 
-/* Focus Styling */
-.button:focused {
-    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.3), 10, 0, 0, 0);
+.custom-alert .content {
+    -fx-padding: 15;
+    -fx-font-size: 14px;
 }
 
-.text-field:focused {
-    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.2), 8, 0, 0, 0);
+.custom-alert .button-bar .button {
+    -fx-background-color: -primary;
+    -fx-text-fill: white;
+}
+
+.custom-alert .button-bar .button:hover {
+    -fx-background-color: -primary-dark;
 }
