@@ -245,3 +245,9 @@
     -fx-translate-y: 20;
     -fx-opacity: 0;
 }
+
+.validation-label{
+    -fx-text-fill: -danger;
+    -fx-font-size: 11px;
+    -fx-padding: 4 0 0 0;
+}

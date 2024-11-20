@@ -17,4 +17,5 @@ public interface UserDAO extends CrudDAO<User> {
     List<User> findByRole(Role role) throws Exception;
     boolean updateUserRole(Integer userId, Role newRole) throws Exception;
     Integer getCurrentId() throws Exception;
+    Integer getUserIdByUsername(String username) throws Exception;
 }

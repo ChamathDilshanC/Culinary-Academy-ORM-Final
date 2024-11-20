@@ -42,15 +42,29 @@
 
                 <!-- User Profile Section -->
                 <VBox styleClass="user-profile-section">
+                    <Label text="Hello There User !" styleClass="user-greeting"/>
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <Circle fx:id="userAvatar" radius="20" styleClass="user-avatar"/>
-                        <VBox spacing="2">
-                            <Label fx:id="userId" text="admin" styleClass="user-name"/>
-                            <Label fx:id="userName" text="admin" styleClass="user-name"/>
-                            <Label fx:id="userRole" text="Administrator" styleClass="user-role"/>
+                        <VBox spacing="5">
+                            <!-- User Information with proper formatting -->
+                            <HBox spacing="5" alignment="CENTER_LEFT">
+                                <Label text="User ID : " styleClass="label-title"/>
+                                <Label fx:id="labelUserId" text="Not Set" styleClass="label-value"/>
+                            </HBox>
+
+                            <HBox spacing="5" alignment="CENTER_LEFT">
+                                <Label text="Username : " styleClass="label-title"/>
+                                <Label fx:id="userName" text="Not Set" styleClass="label-value"/>
+                            </HBox>
+
+                            <HBox spacing="5" alignment="CENTER_LEFT">
+                                <Label text="Role : " styleClass="label-title"/>
+                                <Label fx:id="userRole" text="Not Set" styleClass="label-value"/>
+                            </HBox>
                         </VBox>
                     </HBox>
-                    <!-- ADD A BOTTOM GAP -->
+
+                    <!-- Time and Date Section -->
                     <VBox styleClass="spacer"/>
                     <Label fx:id="timeLabel" styleClass="time-label"/>
                     <Label fx:id="dateLabel" styleClass="date-label"/>

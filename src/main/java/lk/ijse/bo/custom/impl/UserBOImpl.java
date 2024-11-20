@@ -166,4 +166,9 @@ public class UserBOImpl implements UserBO {
     public Integer getCurrentId() throws Exception {
         return userDAO.getCurrentId();
     }
+
+    @Override
+    public Integer getUserIdByUsername(String username) throws Exception {
+        return userDAO.getUserIdByUsername(username);
+    }
 }

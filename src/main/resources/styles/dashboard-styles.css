@@ -155,3 +155,88 @@
 .close-button:hover .glyph-icon {
     -fx-fill: white;
 }
+
+.label-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
+
+.label-value {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
+
+.user-profile-section {
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+    -fx-background-color: transparent;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+}
+
+.user-profile-section HBox {
+    -fx-padding: 5px 0;
+}
+
+.time-label, .date-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #555555;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+}
+
+.user-greeting {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: linear-gradient(to right, #2563eb, #3b82f6);
+    -fx-padding: 12px 20px;
+    -fx-background-color: transparent;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: rgba(37, 99, 235, 0.1);
+    -fx-border-width: 1px;
+    -fx-alignment: center;
+
+    /* Modern shadow effect */
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.15), 10, 0, 0, 4),
+    innershadow(gaussian, rgba(255, 255, 255, 0.8), 1, 0, 0, 1);
+
+    /* Smooth transition for hover effects */
+    -fx-transition-duration: 0.3s;
+}
+
+/* Hover effect */
+.user-greeting:hover {
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.2), 15, 0, 0, 6),
+    innershadow(gaussian, rgba(255, 255, 255, 0.9), 1, 0, 0, 1);
+}
+
+/* Pressed effect */
+.user-greeting:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Animation keyframes for subtle breathing effect */
+.user-greeting {
+    -fx-animation: breathing 3s ease-in-out infinite;
+}
+
+@keyframes breathing {
+    0% { -fx-scale-x: 1; -fx-scale-y: 1; }
+    50% { -fx-scale-x: 1.01; -fx-scale-y: 1.01; }
+    100% { -fx-scale-x: 1; -fx-scale-y: 1; }
+}
+
+/* Optional: Add this class for an even more modern frosted glass effect */
+.user-greeting.frosted {
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.15), 10, 0, 0, 4);
+}

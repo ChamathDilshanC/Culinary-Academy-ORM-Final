@@ -19,4 +19,5 @@ public interface UserBO extends SuperBO {
     boolean updatePassword(Integer userId, String newPassword) throws Exception;
     List<UserDTO> findByRole(Role role) throws Exception;
     Integer getCurrentId() throws Exception;
+    Integer getUserIdByUsername(String username) throws Exception;
 }

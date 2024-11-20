@@ -7,6 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
@@ -15,7 +17,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import de.jensd.fx.glyphs.fontawesome.*;
 import lk.ijse.bo.BOFactory;
-import lk.ijse.bo.custom.StudentBO;
 import lk.ijse.bo.custom.UserBO;
 import lk.ijse.dto.UserDTO;
 import lk.ijse.entity.User.Role;
@@ -59,6 +60,11 @@ public class LoginFormController implements Initializable {
         iconEye.setIcon(FontAwesomeIcon.EYE);
         loadingPane.setVisible(false);
         loadingPane.setManaged(false);
+
+        // Add key event handlers
+        txtUsername.setOnKeyPressed(this::handleKeyPress);
+        txtPassword.setOnKeyPressed(this::handleKeyPress);
+        txtPasswordVisible.setOnKeyPressed(this::handleKeyPress);
 
         // Make login form draggable
         rootPane.setOnMousePressed(event -> {
@@ -121,6 +127,19 @@ public class LoginFormController implements Initializable {
         );
     }
 
+    private void handleKeyPress(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            String username = txtUsername.getText();
+            String password = passwordVisible ? txtPasswordVisible.getText() : txtPassword.getText();
+
+            if (!username.isEmpty() && !password.isEmpty()) {
+                handleLogin();
+            } else {
+                NotificationUtil.showWarning("Please enter both username and password");
+            }
+        }
+    }
+
     @FXML
     private void handleLogin() {
         String username = txtUsername.getText();
@@ -164,7 +183,7 @@ public class LoginFormController implements Initializable {
 
             DashboardFormController dashboardController = loader.getController();
             dashboardController.setUserInfo(user.getUsername(), roleText);
-            dashboardController.initializeWithUser(user); // Add this method to DashboardFormController
+            dashboardController.initializeWithUser(user);
 
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setScene(scene);

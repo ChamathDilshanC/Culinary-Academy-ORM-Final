@@ -256,4 +256,22 @@ public class UserDAOImpl implements UserDAO {
             session.close();
         }
     }
+
+    @Override
+    public Integer getUserIdByUsername(String username) throws Exception {
+        Session session = FactoryConfiguration.getInstance().getSession();
+        try {
+            Query<Integer> query = session.createQuery(
+                    "SELECT u.userId FROM User u WHERE u.username = :username",
+                    Integer.class
+            );
+            query.setParameter("username", username);
+            return query.uniqueResult();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            session.close();
+        }
+    }
+
 }
