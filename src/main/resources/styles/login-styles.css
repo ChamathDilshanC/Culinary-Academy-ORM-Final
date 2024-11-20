@@ -184,7 +184,7 @@
     -fx-background-color: #4a43ff;
 }
 
-/* Loading Overlay */
+
 .loading-overlay {
     -fx-background-color: rgba(255,255,255,0.8);
 }
@@ -192,23 +192,27 @@
 .loading-spinner {
     -fx-progress-color: #6c63ff;
 }
-/* Add to login-styles.css */
+
 .login-container {
     -fx-background-color: white;
     -fx-background-radius: 20;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 10);
-    -fx-max-width: 1200px;  /* Maximum width */
-    -fx-min-width: 800px;   /* Minimum width */
-    -fx-max-height: 80%;   /* Maximum height (80% of viewport height) */
-    -fx-min-height: 600px;  /* Minimum height */
+    -fx-max-width: 1200px;
+    -fx-min-width: 800px;
+    -fx-max-height: 80%;
+    -fx-min-height: 600px;
 }
 
 .left-panel {
-    -fx-min-width: 35%;    /* Make left panel responsive */
-    -fx-max-width: 450px;  /* Maximum width for left panel */
+    -fx-min-width: 35%;
+    -fx-max-width: 450px;
 }
 
-/* Add media queries for different screen sizes */
+.spacer {
+    -fx-pref-height: 10px;
+}
+
+
 @media (max-width: 1200px) {
     .login-container {
         -fx-max-width: 90vw;

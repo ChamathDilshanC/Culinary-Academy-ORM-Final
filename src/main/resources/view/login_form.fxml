@@ -16,7 +16,7 @@
            xmlns="http://javafx.com/javafx/19.0.2.1"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="lk.ijse.controller.LoginFormController"
-           stylesheets="@../styles/login-styles.css">
+           stylesheets="@/styles/login-styles.css">
 
     <!-- Background with animated shapes -->
     <Pane fx:id="backgroundPane" styleClass="background-pane">
@@ -95,6 +95,7 @@
                             <!-- Username Field -->
                             <VBox spacing="5">
                                 <Label styleClass="field-label" text="Username"/>
+                                <VBox styleClass="spacer"/>
                                 <HBox styleClass="input-box" alignment="CENTER_LEFT">
                                     <FontAwesomeIconView glyphName="USER" styleClass="field-icon"/>
                                     <TextField fx:id="txtUsername" promptText="Enter your username"
@@ -105,6 +106,7 @@
                             <!-- Password Field -->
                             <VBox spacing="5">
                                 <Label styleClass="field-label" text="Password"/>
+                                <VBox styleClass="spacer"/>
                                 <HBox styleClass="input-box" alignment="CENTER_LEFT">
                                     <FontAwesomeIconView glyphName="LOCK" styleClass="field-icon"/>
                                     <PasswordField fx:id="txtPassword" promptText="Enter your password"
