@@ -127,7 +127,7 @@ public class DashboardFormController implements Initializable {
     @FXML
     public void loadStudents() {
         loadFXML("StudentForm.fxml");
-        NotificationUtil.showSuccess("Loaded Students");
+        NotificationUtil.showSuccess("Loaded Student Management");
     }
 
     @FXML
