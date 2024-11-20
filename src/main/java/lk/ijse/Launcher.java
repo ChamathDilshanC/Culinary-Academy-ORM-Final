@@ -6,10 +6,13 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import lk.ijse.util.DatabaseInitializer;
 
 public class Launcher extends Application {
     @Override
     public void start(Stage stage) throws Exception {
+        DatabaseInitializer.initializePrograms();
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/dashboard_form.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 

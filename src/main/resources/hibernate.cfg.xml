@@ -23,5 +23,6 @@
     <!-- Names the annotated entity classes -->
     <mapping class="lk.ijse.entity.Student"/>
     <mapping class="lk.ijse.entity.User"/>
+    <mapping class="lk.ijse.entity.Program"/>
   </session-factory>
 </hibernate-configuration>

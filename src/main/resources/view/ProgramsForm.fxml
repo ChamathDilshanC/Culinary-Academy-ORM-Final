@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="0" stylesheets="@/styles/ProgramManagement.css" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="lk.ijse.controller.ProgramManagementController">
+
+    <VBox styleClass="main-content" VBox.vgrow="ALWAYS">
+        <!-- Header Section -->
+        <VBox styleClass="content-header">
+            <Label text="Program Management" styleClass="page-title"/>
+            <Label text="Manage culinary program information" styleClass="page-subtitle"/>
+        </VBox>
+
+        <!-- Form Section -->
+        <VBox fx:id="formContainer" styleClass="form-container">
+            <GridPane hgap="20" vgap="15">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+
+                <!-- Left Column -->
+                <VBox spacing="15" GridPane.columnIndex="0">
+                    <VBox spacing="5">
+                        <Label text="Program ID" styleClass="field-label"/>
+                        <TextField fx:id="programIdField"
+                                   styleClass="text-field"
+                                   promptText="Enter program ID"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Program Name" styleClass="field-label"/>
+                        <VBox>
+                            <TextField fx:id="programNameField"
+                                       styleClass="text-field"
+                                       promptText="Enter program name"
+                                       onKeyReleased="#validateField"/>
+                            <HBox fx:id="nameValidationContainer" styleClass="validation-container">
+                                <Label fx:id="nameValidation" styleClass="validation-label"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Duration (Months)" styleClass="field-label"/>
+                        <VBox>
+                            <TextField fx:id="durationMonthsField"
+                                       styleClass="text-field"
+                                       promptText="Enter duration"
+                                       onKeyReleased="#validateField"/>
+                            <HBox fx:id="durationValidationContainer" styleClass="validation-container">
+                                <Label fx:id="durationValidation" styleClass="validation-label"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </VBox>
+
+                <!-- Right Column -->
+                <VBox spacing="15" GridPane.columnIndex="1">
+                    <VBox spacing="5">
+                        <Label text="Fee (LKR)" styleClass="field-label"/>
+                        <VBox>
+                            <TextField fx:id="feeField"
+                                       styleClass="text-field"
+                                       promptText="Enter fee amount"
+                                       onKeyReleased="#validateField"/>
+                            <HBox fx:id="feeValidationContainer" styleClass="validation-container">
+                                <Label fx:id="feeValidation" styleClass="validation-label"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Description" styleClass="field-label"/>
+                        <VBox>
+                            <TextArea fx:id="descriptionArea"
+                                      styleClass="text-area"
+                                      promptText="Enter program description"
+                                      prefRowCount="4"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+            </GridPane>
+
+            <!-- Action Buttons -->
+            <HBox spacing="10" styleClass="form-buttons">
+                <Button fx:id="clearBtn"
+                        text="Clear"
+                        styleClass="button, clear-button"
+                        onAction="#handleClear"/>
+                <Button fx:id="saveBtn"
+                        text="Save"
+                        styleClass="button, save-button"
+                        onAction="#handleSave"/>
+                <Button fx:id="updateBtn"
+                        text="Update"
+                        styleClass="button, update-button"
+                        onAction="#handleUpdate"/>
+                <Button fx:id="deleteBtn"
+                        text="Delete"
+                        styleClass="button, delete-button"
+                        onAction="#handleDelete"/>
+            </HBox>
+        </VBox>
+
+        <!-- Search Section -->
+        <HBox styleClass="search-container">
+            <TextField fx:id="searchField"
+                       promptText="Search programs..."
+                       styleClass="search-field"
+                       HBox.hgrow="ALWAYS"
+                       onKeyReleased="#handleSearch"/>
+            <Button fx:id="hideFormBtn"
+                    text="Hide Form"
+                    styleClass="button, hide-form-button"
+                    onAction="#handleToggleForm"/>
+        </HBox>
+
+        <!-- Table Section -->
+        <TableView fx:id="programTable" styleClass="program-table" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId" text="ID"/>
+                <TableColumn fx:id="colName" text="Program Name"/>
+                <TableColumn fx:id="colDuration" text="Duration"/>
+                <TableColumn fx:id="colFee" text="Fee (LKR)"/>
+                <TableColumn fx:id="colDescription" text="Description"/>
+                <TableColumn fx:id="colActions" text="Actions"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+
+        <!-- Status Bar -->
+        <HBox styleClass="status-bar">
+            <Label fx:id="totalProgramsLabel" text="Total Programs: 0"/>
+        </HBox>
+    </VBox>
+</VBox>

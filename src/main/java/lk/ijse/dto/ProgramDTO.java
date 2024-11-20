@@ -1,20 +1,16 @@
-package lk.ijse.entity;
+package lk.ijse.dto;
 
-import javax.persistence.*;
-
-@Entity
-public class Program {
-    @Id
+public class ProgramDTO {
     private String programId;
     private String programName;
     private int durationMonths;
     private double fee;
     private String description;
 
-    public Program() {
+    public ProgramDTO() {
     }
 
-    public Program(String programId, String programName, int durationMonths, double fee, String description) {
+    public ProgramDTO(String programId, String programName, int durationMonths, double fee, String description) {
         this.programId = programId;
         this.programName = programName;
         this.durationMonths = durationMonths;
