@@ -1,62 +1,29 @@
-package lk.ijse.entity;
+package lk.ijse.dto;
 
-import javax.persistence.*;
+import lk.ijse.entity.Payment.PaymentMethod;
+import lk.ijse.entity.Payment.PaymentStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "payment")
-public class Payment {
-    public enum PaymentMethod {
-        CASH,
-        CARD,
-        BANK_TRANSFER
-    }
-
-    public enum PaymentStatus {
-        PENDING,
-        COMPLETED,
-        FAILED,
-        REFUNDED
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PaymentDTO {
     private Integer paymentId;
-
-    @ManyToOne
-    @JoinColumn(name = "registrationId", nullable = false)
-    private Registration registration;
-
-    @Column(nullable = false, precision = 10, scale = 2)
+    private Integer registrationId;
     private BigDecimal amount;
-
-    @Column(nullable = false)
     private LocalDateTime paymentDate;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private PaymentMethod paymentMethod;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private PaymentStatus status;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Payment() {
+    public PaymentDTO() {
     }
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    public PaymentDTO(Integer registrationId, BigDecimal amount, PaymentMethod paymentMethod) {
+        this.registrationId = registrationId;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.paymentDate = LocalDateTime.now();
+        this.status = PaymentStatus.PENDING;
     }
 
     public Integer getPaymentId() {
@@ -67,12 +34,12 @@ public class Payment {
         this.paymentId = paymentId;
     }
 
-    public Registration getRegistration() {
-        return registration;
+    public Integer getRegistrationId() {
+        return registrationId;
     }
 
-    public void setRegistration(Registration registration) {
-        this.registration = registration;
+    public void setRegistrationId(Integer registrationId) {
+        this.registrationId = registrationId;
     }
 
     public BigDecimal getAmount() {

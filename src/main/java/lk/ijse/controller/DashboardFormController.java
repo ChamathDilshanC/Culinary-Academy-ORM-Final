@@ -27,7 +27,7 @@ import lk.ijse.util.NotificationUtil;
 
 public class DashboardFormController implements Initializable {
 
-    @FXML private Label labelUserId;
+    @FXML public Label labelUserId;
     @FXML private BorderPane contentArea;
     @FXML private Label timeLabel;
     @FXML private Label dateLabel;
