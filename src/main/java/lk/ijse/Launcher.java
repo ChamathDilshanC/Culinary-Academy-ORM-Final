@@ -11,7 +11,7 @@ import lk.ijse.util.DatabaseInitializer;
 public class Launcher extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        DatabaseInitializer.initializePrograms();
+        DatabaseInitializer.initializeDatabase();
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/login_form.fxml"));
         Scene scene = new Scene(fxmlLoader.load());

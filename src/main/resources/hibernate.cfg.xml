@@ -24,5 +24,7 @@
     <mapping class="lk.ijse.entity.Student"/>
     <mapping class="lk.ijse.entity.User"/>
     <mapping class="lk.ijse.entity.Program"/>
+    <mapping class="lk.ijse.entity.Registration"/>
+    <mapping class="lk.ijse.entity.ProgramRegistration"/>
   </session-factory>
 </hibernate-configuration>

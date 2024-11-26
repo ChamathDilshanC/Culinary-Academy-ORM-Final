@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<?import java.net.URL?>
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="lk.ijse.controller.ProgramRegistrationFormController"
+           styleClass="main-container">
+
+    <stylesheets>
+        <URL value="@/styles/ProgramRegistration.css"/>
+    </stylesheets>
+
+    <VBox spacing="20" styleClass="content-area">
+        <!-- Modern Header -->
+        <HBox styleClass="header-card">
+            <HBox spacing="15" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <FontAwesomeIconView glyphName="GRADUATION_CAP" styleClass="header-icon"/>
+                <VBox>
+                    <Text text="Program Registration" styleClass="header-title"/>
+                    <Text text="Register students for training programs" styleClass="header-subtitle"/>
+                </VBox>
+            </HBox>
+            <VBox alignment="CENTER_RIGHT">
+                <Text text="Registration ID" styleClass="id-label"/>
+                <Label fx:id="lblRegistrationId" text="#001" styleClass="id-value"/>
+            </VBox>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+            <VBox spacing="20">
+                <!-- Student Selection -->
+                <VBox styleClass="section-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <FontAwesomeIconView glyphName="USER" styleClass="section-icon"/>
+                        <Label text="Student Information" styleClass="section-title"/>
+                    </HBox>
+                    <Separator/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ComboBox fx:id="cmbStudentId" promptText="Select Student"
+                                  styleClass="combo-primary" HBox.hgrow="ALWAYS"/>
+                        <HBox styleClass="search-box" HBox.hgrow="ALWAYS">
+                            <TextField fx:id="txtStudentSearch"
+                                       promptText="Search by phone number"/>
+                            <FontAwesomeIconView glyphName="SEARCH" styleClass="search-icon"/>
+                        </HBox>
+                    </HBox>
+
+                    <GridPane styleClass="info-grid" hgap="15" vgap="10">
+                        <Label text="Full Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="txtStudentName" editable="false"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Contact:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <TextField fx:id="txtContact" editable="false"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="txtEmail" editable="false"
+                                   GridPane.columnIndex="1" GridPane.columnSpan="3"
+                                   GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Program Selection -->
+                <VBox styleClass="section-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <FontAwesomeIconView glyphName="BOOK" styleClass="section-icon"/>
+                        <Label text="Program Selection" styleClass="section-title"/>
+                    </HBox>
+                    <Separator/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ComboBox fx:id="cmbProgram" promptText="Select Program"
+                                  styleClass="combo-primary" HBox.hgrow="ALWAYS"/>
+                        <Button onAction="#handleAddProgram" styleClass="btn-primary">
+                            <graphic>
+                                <HBox spacing="8" alignment="CENTER">
+                                    <FontAwesomeIconView glyphName="PLUS"
+                                                         styleClass="btn-icon"/>
+                                    <Label text="Add Program" styleClass="btn-text"/>
+                                </HBox>
+                            </graphic>
+                        </Button>
+                    </HBox>
+
+                    <TableView fx:id="tblSelectedPrograms" VBox.vgrow="ALWAYS"
+                               styleClass="modern-table">
+                        <columns>
+                            <TableColumn fx:id="colProgramId" text="Program ID"/>
+                            <TableColumn fx:id="colProgramName" text="Program Name"/>
+                            <TableColumn fx:id="colDuration" text="Duration"/>
+                            <TableColumn fx:id="colFee" text="Fee"/>
+                            <TableColumn fx:id="colRemove" text="Action"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <!-- Payment Information -->
+                <VBox styleClass="section-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <FontAwesomeIconView glyphName="CREDIT_CARD"
+                                             styleClass="section-icon"/>
+                        <Label text="Payment Information" styleClass="section-title"/>
+                    </HBox>
+                    <Separator/>
+
+                    <GridPane styleClass="payment-grid" hgap="20" vgap="15">
+                        <Label text="Payment Method" styleClass="field-label"
+                               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <ComboBox fx:id="cmbPaymentMethod" styleClass="combo-primary"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Total Amount" styleClass="field-label"
+                               GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                        <Label fx:id="lblTotalAmount" text="Rs. 0.00"
+                               styleClass="amount-label"
+                               GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                        <Label text="Payment Status" styleClass="field-label"
+                               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <ComboBox fx:id="cmbPaymentStatus" styleClass="combo-primary"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="Paid Amount" styleClass="field-label"
+                               GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <TextField fx:id="txtAmount" styleClass="amount-field"
+                                   promptText="Enter amount"
+                                   GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Action Buttons -->
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button onAction="#handleClear" styleClass="btn-secondary">
+                        <graphic>
+                            <HBox spacing="8" alignment="CENTER">
+                                <FontAwesomeIconView glyphName="REFRESH"
+                                                     styleClass="btn-icon"/>
+                                <Label text="Clear Form" styleClass="btn-text"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                    <Button onAction="#handleRegister"
+                            styleClass="btn-primary">
+                        <graphic>
+                            <HBox spacing="8" alignment="CENTER">
+                                <FontAwesomeIconView glyphName="CHECK"
+                                                     styleClass="btn-icon"/>
+                                <Label text="Complete Registration"
+                                       styleClass="btn-text"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                </HBox>
+
+                <!-- Recent Registrations -->
+                <VBox styleClass="section-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <FontAwesomeIconView glyphName="LIST" styleClass="section-icon"/>
+                        <Label text="Recent Registrations" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="txtSearch" promptText="Search registrations..."
+                                   styleClass="search-field"/>
+                    </HBox>
+                    <TableView fx:id="tblRegistrations" VBox.vgrow="ALWAYS"
+                               styleClass="modern-table">
+                        <columns>
+                            <TableColumn fx:id="colRegId" text="ID" prefWidth="80"/>
+                            <TableColumn fx:id="colStudent" text="Student"
+                                         prefWidth="200"/>
+                            <TableColumn fx:id="colProgram" text="Program"
+                                         prefWidth="200"/>
+                            <TableColumn fx:id="colDate" text="Date" prefWidth="150"/>
+                            <TableColumn fx:id="colAmount" text="Amount"
+                                         prefWidth="120"/>
+                            <TableColumn fx:id="colStatus" text="Status"
+                                         prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+
+    <!-- Loading Overlay -->
+    <StackPane fx:id="loadingPane" visible="false" styleClass="loading-overlay">
+        <VBox alignment="CENTER" spacing="15">
+            <ProgressIndicator styleClass="progress-spinner"/>
+            <Label text="Processing..." styleClass="loading-text"/>
+        </VBox>
+    </StackPane>
+</StackPane>

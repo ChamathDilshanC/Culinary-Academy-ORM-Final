@@ -2,6 +2,8 @@ package lk.ijse.dto;
 
 import lk.ijse.entity.Payment.PaymentMethod;
 import lk.ijse.entity.Payment.PaymentStatus;
+import lk.ijse.entity.Registration;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -88,5 +90,8 @@ public class PaymentDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setStatus(Registration.PaymentStatus value) {
     }
 }

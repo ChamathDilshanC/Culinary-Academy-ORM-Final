@@ -1,3 +1,4 @@
+// Registration.java
 package lk.ijse.entity;
 
 import javax.persistence.*;
@@ -6,56 +7,42 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "registration")
 public class Registration {
-    public enum PaymentStatus {
-        PENDING,
-        PARTIAL,
-        COMPLETED,
-        EXPIRED
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String registrationId;
+    @Column(name = "registration_id")
+    private Integer registrationId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
-    @Column(nullable = false)
+    @Column(name = "registration_date", nullable = false)
     private LocalDateTime registrationDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Registration() {
+    public static enum PaymentStatus {
+        PENDING, COMPLETED, CANCELLED
     }
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        registrationDate = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
-    // Getters and setters with proper return types
-    public String getRegistrationId() {
+    // Getters and Setters
+    public Integer getRegistrationId() {
         return registrationId;
     }
 
-    public void setRegistrationId(String registrationId) {
+    public void setRegistrationId(Integer registrationId) {
         this.registrationId = registrationId;
     }
 

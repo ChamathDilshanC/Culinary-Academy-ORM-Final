@@ -38,6 +38,20 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Student> students = new ArrayList<>();
 
+    public User(Object o, String staff, String staff123, String mail, Role role, LocalDateTime now, LocalDateTime now1, LocalDateTime now2) {
+        this.username = staff;
+        this.password = staff123;
+        this.email = mail;
+        this.role = role;
+        this.lastLogin = now;
+        this.createdAt = now1;
+        this.updatedAt = now2;
+    }
+
+    public User() {
+
+    }
+
     public enum Role {
         ADMIN, COORDINATOR
     }

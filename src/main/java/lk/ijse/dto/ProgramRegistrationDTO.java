@@ -1,6 +1,7 @@
 package lk.ijse.dto;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import lk.ijse.entity.Registration.PaymentStatus;
 import java.time.LocalDateTime;
 
 public class ProgramRegistrationDTO extends RecursiveTreeObject<ProgramRegistrationDTO> {
@@ -8,31 +9,16 @@ public class ProgramRegistrationDTO extends RecursiveTreeObject<ProgramRegistrat
     private Integer studentId;
     private String programId;
     private LocalDateTime registrationDate;
-    private String status;
-    private Double paymentAmount;
+    private PaymentStatus paymentStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    // Additional display fields
     private String studentName;
     private String programName;
+    private Integer programDuration;
+    private Double programFee;
 
     public ProgramRegistrationDTO() {}
 
-    public ProgramRegistrationDTO(Integer registrationId, Integer studentId, String programId,
-                                  LocalDateTime registrationDate, String status, Double paymentAmount,
-                                  LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.registrationId = registrationId;
-        this.studentId = studentId;
-        this.programId = programId;
-        this.registrationDate = registrationDate;
-        this.status = status;
-        this.paymentAmount = paymentAmount;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    // Getters and Setters
     public Integer getRegistrationId() {
         return registrationId;
     }
@@ -65,36 +51,12 @@ public class ProgramRegistrationDTO extends RecursiveTreeObject<ProgramRegistrat
         this.registrationDate = registrationDate;
     }
 
-    public String getStatus() {
-        return status;
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Double getPaymentAmount() {
-        return paymentAmount;
-    }
-
-    public void setPaymentAmount(Double paymentAmount) {
-        this.paymentAmount = paymentAmount;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
     public String getStudentName() {
@@ -111,5 +73,37 @@ public class ProgramRegistrationDTO extends RecursiveTreeObject<ProgramRegistrat
 
     public void setProgramName(String programName) {
         this.programName = programName;
+    }
+
+    public Integer getProgramDuration() {
+        return programDuration;
+    }
+
+    public void setProgramDuration(Integer programDuration) {
+        this.programDuration = programDuration;
+    }
+
+    public Double getProgramFee() {
+        return programFee;
+    }
+
+    public void setProgramFee(Double programFee) {
+        this.programFee = programFee;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

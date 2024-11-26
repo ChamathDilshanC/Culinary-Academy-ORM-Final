@@ -2,30 +2,33 @@ package lk.ijse.dto;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import lk.ijse.entity.Registration.PaymentStatus;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class RegistrationDTO extends RecursiveTreeObject<RegistrationDTO> {
-    private String registrationId;
+    private Integer registrationId;  // Changed to Integer
     private String studentId;
     private String programId;
     private LocalDateTime registrationDate;
     private PaymentStatus paymentStatus;
-    private String studentName;
-    private String programName;
-    private Double programFee;
-    private Integer programDuration;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public RegistrationDTO() {
-    }
+    // Additional display fields
+    private String studentName;
+    private String programName;
+    private Integer programDuration;
+    private Double programFee;
 
-    // Getters and setters
-    public String getRegistrationId() {
+    public RegistrationDTO() {}
+
+    // Getters and Setters
+    public Integer getRegistrationId() {  // Changed to Integer
         return registrationId;
     }
 
-    public void setRegistrationId(String registrationId) {
+    public void setRegistrationId(Integer registrationId) {  // Changed to Integer
         this.registrationId = registrationId;
     }
 
@@ -77,20 +80,20 @@ public class RegistrationDTO extends RecursiveTreeObject<RegistrationDTO> {
         this.programName = programName;
     }
 
-    public Double getProgramFee() {
-        return programFee;
-    }
-
-    public void setProgramFee(Double programFee) {
-        this.programFee = programFee;
-    }
-
     public Integer getProgramDuration() {
         return programDuration;
     }
 
     public void setProgramDuration(Integer programDuration) {
         this.programDuration = programDuration;
+    }
+
+    public Double getProgramFee() {
+        return programFee;
+    }
+
+    public void setProgramFee(Double programFee) {
+        this.programFee = programFee;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -107,5 +110,8 @@ public class RegistrationDTO extends RecursiveTreeObject<RegistrationDTO> {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setProgramFee(BigDecimal bigDecimal) {
     }
 }

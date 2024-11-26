@@ -2,10 +2,13 @@ package lk.ijse.util;
 
 import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.entity.Program;
+import lk.ijse.entity.User;
+import lk.ijse.entity.User.Role;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,9 +26,23 @@ public class DatabaseInitializer {
                     "Essential training in food safety and hygiene standards")
     );
 
+    private static final List<User> DEFAULT_USERS = Arrays.asList(
+            new User(-1, "admin",
+                    PasswordEncoder.encode("admin123"),
+                    "admin@culinaryacademy.com",
+                    Role.ADMIN,
+                    LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    LocalDateTime.now())
+    );
+
+    public static void initializeDatabase() {
+        initializePrograms();
+        initializeUsers();
+    }
+
     public static void initializePrograms() {
-        // Check if already initialized
-        if (InitializationTracker.isInitialized()) {
+        if (InitializationTracker.isProgramsInitialized()) {
             return;
         }
 
@@ -33,12 +50,10 @@ public class DatabaseInitializer {
         Transaction transaction = null;
 
         try {
-            // Check if programs already exist
             Query<Long> countQuery = session.createQuery(
                     "SELECT COUNT(*) FROM Program", Long.class);
             long programCount = countQuery.uniqueResult();
 
-            // Only initialize if no programs exist
             if (programCount == 0) {
                 transaction = session.beginTransaction();
 
@@ -48,9 +63,7 @@ public class DatabaseInitializer {
 
                 transaction.commit();
                 System.out.println("Default programs initialized successfully");
-
-                // Mark as initialized
-                InitializationTracker.markAsInitialized();
+                InitializationTracker.markProgramsAsInitialized();
             }
         } catch (Exception e) {
             if (transaction != null) {
@@ -58,6 +71,41 @@ public class DatabaseInitializer {
             }
             e.printStackTrace();
             System.err.println("Error initializing default programs: " + e.getMessage());
+        } finally {
+            session.close();
+        }
+    }
+
+    public static void initializeUsers() {
+        if (InitializationTracker.isUsersInitialized()) {
+            return;
+        }
+
+        Session session = FactoryConfiguration.getInstance().getSession();
+        Transaction transaction = null;
+
+        try {
+            Query<Long> countQuery = session.createQuery(
+                    "SELECT COUNT(*) FROM User", Long.class);
+            long userCount = countQuery.uniqueResult();
+
+            if (userCount == 0) {
+                transaction = session.beginTransaction();
+
+                for (User user : DEFAULT_USERS) {
+                    session.save(user);
+                }
+
+                transaction.commit();
+                System.out.println("Default users initialized successfully");
+                InitializationTracker.markUsersAsInitialized();
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.err.println("Error initializing default users: " + e.getMessage());
         } finally {
             session.close();
         }

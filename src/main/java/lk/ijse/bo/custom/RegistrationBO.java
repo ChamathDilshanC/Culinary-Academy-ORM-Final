@@ -16,4 +16,5 @@ public interface RegistrationBO extends SuperBO {
     List<RegistrationDTO> getRegistrationsByPaymentStatus(PaymentStatus status) throws Exception;
     boolean isStudentRegisteredToProgram(String studentId, String programId) throws Exception;
     List<RegistrationDTO> getRecentRegistrations() throws Exception;
+    Integer getNextRegistrationId();
 }

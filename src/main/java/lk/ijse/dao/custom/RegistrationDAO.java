@@ -11,4 +11,5 @@ public interface RegistrationDAO extends CrudDAO<Registration> {
     List<Registration> findByPaymentStatus(PaymentStatus status) throws Exception;
     boolean existsByStudentAndProgram(String studentId, String programId) throws Exception;
     List<Registration> findRecentRegistrations() throws Exception;
+    Integer getNextId();
 }

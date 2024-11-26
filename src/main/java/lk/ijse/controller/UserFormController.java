@@ -193,7 +193,7 @@ public class UserFormController implements Initializable {
         }
 
         // Update save button state
-        btnSave.setDisable(!isValid);
+        btnSave.setDisable(isValid);
     }
 
     private void updateFieldValidation(TextField field, Label validationLabel,
@@ -333,6 +333,7 @@ public class UserFormController implements Initializable {
     @FXML
     private void btnSaveOnAction() {
         if (!validateInputs()) return;
+        btnSave.setDisable(true);
 
         try {
             if (userBO.existsByUsername(txtUsername.getText())) {
@@ -396,6 +397,7 @@ public class UserFormController implements Initializable {
                 clearFields();
                 loadUsers();
                 generateNewId();
+                btnSave.setDisable(false);
             }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to update user", e.getMessage());
