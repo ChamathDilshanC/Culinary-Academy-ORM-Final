@@ -25,6 +25,6 @@
     <mapping class="lk.ijse.entity.User"/>
     <mapping class="lk.ijse.entity.Program"/>
     <mapping class="lk.ijse.entity.Registration"/>
-    <mapping class="lk.ijse.entity.ProgramRegistration"/>
+    <mapping class="lk.ijse.entity.RegistrationDetails"/>
   </session-factory>
 </hibernate-configuration>

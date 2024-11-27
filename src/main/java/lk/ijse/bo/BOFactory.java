@@ -12,7 +12,7 @@ public class BOFactory {
     }
 
     public enum BOTypes {
-        STUDENT, PROGRAM, REGISTRATION, PAYMENT, USER, PROGRAM_REGISTRATION
+        STUDENT, PROGRAM, REGISTRATION, PAYMENT, USER, REGISTRATION_DETAILS
     }
 
     public SuperBO getBO(BOTypes type) {
@@ -27,8 +27,8 @@ public class BOFactory {
                 return new PaymentBOImpl();
             case REGISTRATION:
                 return new RegistrationBOImpl();
-            case PROGRAM_REGISTRATION:
-                return new ProgramRegistrationBOImpl();
+            case REGISTRATION_DETAILS:
+                return new RegistrationDetailsBOImpl();
             default:
                 return null;
         }

@@ -2,214 +2,169 @@ package lk.ijse.bo.custom.impl;
 
 import lk.ijse.bo.custom.RegistrationBO;
 import lk.ijse.dao.DAOFactory;
-import lk.ijse.dao.custom.RegistrationDAO;
-import lk.ijse.dao.custom.StudentDAO;
-import lk.ijse.dao.custom.ProgramDAO;
-import lk.ijse.dto.RegistrationDTO;
-import lk.ijse.entity.Registration;
-import lk.ijse.entity.Student;
-import lk.ijse.entity.Program;
-import java.util.ArrayList;
+import lk.ijse.dao.custom.*;
+import lk.ijse.dto.*;
+import lk.ijse.entity.*;
+import lk.ijse.config.FactoryConfiguration;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RegistrationBOImpl implements RegistrationBO {
-    // Get DAO instances through factory
-    private final RegistrationDAO registrationDAO;
-    private final StudentDAO studentDAO;
-    private final ProgramDAO programDAO;
-
-    public RegistrationBOImpl() {
-        // Get DAO instances from factory
-        this.registrationDAO = (RegistrationDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.REGISTRATION);
-        this.studentDAO = (StudentDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.STUDENT);
-        this.programDAO = (ProgramDAO) DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.PROGRAM);
-    }
+    private final RegistrationDAO registrationDAO = (RegistrationDAO) DAOFactory.getInstance()
+            .getDAO(DAOFactory.DAOTypes.REGISTRATION);
+    private final StudentDAO studentDAO = (StudentDAO) DAOFactory.getInstance()
+            .getDAO(DAOFactory.DAOTypes.STUDENT);
+    private final ProgramDAO programDAO = (ProgramDAO) DAOFactory.getInstance()
+            .getDAO(DAOFactory.DAOTypes.PROGRAM);
 
     @Override
     public boolean saveRegistration(RegistrationDTO dto) throws Exception {
+        Session session = FactoryConfiguration.getInstance().getSession();
+        Transaction transaction = session.beginTransaction();
+
         try {
-            // First check if student exists
-            Student student = studentDAO.search(dto.getStudentId());
+            // Get student
+            Student student = session.get(Student.class, dto.getStudentId());
             if (student == null) {
-                throw new Exception("Student not found with ID: " + dto.getStudentId());
+                throw new RuntimeException("Student not found: " + dto.getStudentId());
             }
 
-            // Then check if program exists
-            Program program = programDAO.search(dto.getProgramId());
-            if (program == null) {
-                throw new Exception("Program not found with ID: " + dto.getProgramId());
-            }
-
-            // Check if student is already registered for this program
-            if (registrationDAO.existsByStudentAndProgram(dto.getStudentId(), dto.getProgramId())) {
-                throw new Exception("Student is already registered for this program");
-            }
-
-            // Create registration entity
+            // Create registration
             Registration registration = new Registration();
             registration.setStudent(student);
-            registration.setProgram(program);
             registration.setRegistrationDate(dto.getRegistrationDate());
-            registration.setPaymentStatus(dto.getPaymentStatus());
+            registration.setPaymentStatus(Registration.PaymentStatus.valueOf(dto.getPaymentStatus()));
 
-            return registrationDAO.save(registration);
+            // Add details
+            for (RegistrationDetailsDTO detailDTO : dto.getRegistrationDetails()) {
+                Program program = session.get(Program.class, detailDTO.getProgramId());
+                if (program == null) {
+                    throw new RuntimeException("Program not found: " + detailDTO.getProgramId());
+                }
+
+                RegistrationDetails details = new RegistrationDetails();
+                details.setRegistration(registration);
+                details.setProgram(program);
+                registration.getRegistrationDetails().add(details);
+            }
+
+            // Add payments
+            if (!dto.getPayments().isEmpty()) {
+                for (PaymentDTO paymentDTO : dto.getPayments()) {
+                    Payment payment = new Payment();
+                    payment.setRegistration(registration);
+                    payment.setAmount(paymentDTO.getAmount());
+                    payment.setPaymentDate(paymentDTO.getPaymentDate());
+                    payment.setPaymentMethod(Payment.PaymentMethod.valueOf(paymentDTO.getPaymentMethod()));
+                    payment.setStatus(Registration.PaymentStatus.valueOf(paymentDTO.getStatus()));
+                    registration.getPayments().add(payment);
+                }
+            }
+
+            session.save(registration);
+            transaction.commit();
+            return true;
+
         } catch (Exception e) {
-            throw new Exception("Error saving registration: " + e.getMessage(), e);
+            transaction.rollback();
+            throw new RuntimeException("Error saving registration: " + e.getMessage(), e);
+        } finally {
+            session.close();
         }
     }
 
     @Override
     public boolean updateRegistration(RegistrationDTO dto) throws Exception {
+        Session session = FactoryConfiguration.getInstance().getSession();
+        Transaction transaction = session.beginTransaction();
+
         try {
-            // Verify student exists
-            Student student = studentDAO.search(dto.getStudentId());
-            if (student == null) {
-                throw new Exception("Student not found with ID: " + dto.getStudentId());
+            Registration registration = session.get(Registration.class, dto.getId());
+            if (registration == null) {
+                throw new RuntimeException("Registration not found: " + dto.getId());
             }
 
-            // Verify program exists
-            Program program = programDAO.search(dto.getProgramId());
-            if (program == null) {
-                throw new Exception("Program not found with ID: " + dto.getProgramId());
-            }
-
-            // Create registration entity with updated information
-            Registration registration = new Registration();
-            registration.setRegistrationId(dto.getRegistrationId());
-            registration.setStudent(student);
-            registration.setProgram(program);
+            registration.setPaymentStatus(Registration.PaymentStatus.valueOf(dto.getPaymentStatus()));
             registration.setRegistrationDate(dto.getRegistrationDate());
-            registration.setPaymentStatus(dto.getPaymentStatus());
 
-            return registrationDAO.update(registration);
+            session.update(registration);
+            transaction.commit();
+            return true;
+
         } catch (Exception e) {
-            throw new Exception("Error updating registration: " + e.getMessage(), e);
+            transaction.rollback();
+            throw new RuntimeException("Error updating registration: " + e.getMessage(), e);
+        } finally {
+            session.close();
         }
     }
 
     @Override
     public boolean deleteRegistration(String id) throws Exception {
-        try {
-            return registrationDAO.delete(id);
-        } catch (Exception e) {
-            throw new Exception("Error deleting registration: " + e.getMessage(), e);
-        }
+        return registrationDAO.delete(id);
     }
 
     @Override
     public RegistrationDTO searchRegistration(String id) throws Exception {
-        try {
-            Registration registration = registrationDAO.search(id);
-            return registration != null ? convertToDTO(registration) : null;
-        } catch (Exception e) {
-            throw new Exception("Error searching registration: " + e.getMessage(), e);
-        }
+        Registration registration = registrationDAO.search(id);
+        return registration != null ? convertToDTO(registration) : null;
     }
 
     @Override
     public List<RegistrationDTO> getAllRegistrations() throws Exception {
-        try {
-            List<Registration> registrations = registrationDAO.getAll();
-            return convertToDTOList(registrations);
-        } catch (Exception e) {
-            throw new Exception("Error getting all registrations: " + e.getMessage(), e);
-        }
+        return registrationDAO.getAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<RegistrationDTO> getRegistrationsByStudent(String studentId) throws Exception {
-        try {
-            List<Registration> registrations = registrationDAO.findByStudentId(studentId);
-            return convertToDTOList(registrations);
-        } catch (Exception e) {
-            throw new Exception("Error getting registrations by student: " + e.getMessage(), e);
-        }
+    public String getLastRegistrationId() throws Exception {
+        return registrationDAO.getLastId();
     }
 
     @Override
-    public List<RegistrationDTO> getRegistrationsByProgram(String programId) throws Exception {
-        try {
-            List<Registration> registrations = registrationDAO.findByProgramId(programId);
-            return convertToDTOList(registrations);
-        } catch (Exception e) {
-            throw new Exception("Error getting registrations by program: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public List<RegistrationDTO> getRegistrationsByPaymentStatus(Registration.PaymentStatus status) throws Exception {
-        try {
-            List<Registration> registrations = registrationDAO.findByPaymentStatus(status);
-            return convertToDTOList(registrations);
-        } catch (Exception e) {
-            throw new Exception("Error getting registrations by status: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public boolean isStudentRegisteredToProgram(String studentId, String programId) throws Exception {
-        try {
-            return registrationDAO.existsByStudentAndProgram(studentId, programId);
-        } catch (Exception e) {
-            throw new Exception("Error checking student registration: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public List<RegistrationDTO> getRecentRegistrations() throws Exception {
-        try {
-            List<Registration> registrations = registrationDAO.findRecentRegistrations();
-            return convertToDTOList(registrations);
-        } catch (Exception e) {
-            throw new Exception("Error getting recent registrations: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public Integer getNextRegistrationId() {
-        try {
-            return registrationDAO.getNextId();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 1; // Default to 1 if error occurs
-        }
+    public List<RegistrationDTO> findByStudent(String studentId) throws Exception {
+        return registrationDAO.findByStudent(studentId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private RegistrationDTO convertToDTO(Registration registration) {
-        if (registration == null) return null;
-
         RegistrationDTO dto = new RegistrationDTO();
-        dto.setRegistrationId(registration.getRegistrationId());
-        dto.setStudentId(registration.getStudent().getStudentId().toString());
-        dto.setProgramId(registration.getProgram().getProgramId());
+        dto.setId(registration.getId());
+        dto.setStudentId(registration.getStudent().getStudentId());
+        dto.setStudentName(registration.getStudent().getFirstName() + " " +
+                registration.getStudent().getLastName());
         dto.setRegistrationDate(registration.getRegistrationDate());
-        dto.setPaymentStatus(registration.getPaymentStatus());
+        dto.setPaymentStatus(registration.getPaymentStatus().name());
 
-        // Set additional display information
-        Student student = registration.getStudent();
-        Program program = registration.getProgram();
+        // Convert registration details
+        List<RegistrationDetailsDTO> detailsDTOs = registration.getRegistrationDetails().stream()
+                .map(detail -> new RegistrationDetailsDTO(
+                        detail.getId(),
+                        registration.getId(),
+                        detail.getProgram().getProgramId(),
+                        detail.getProgram().getProgramName(),
+                        detail.getProgram().getFee()
+                ))
+                .collect(Collectors.toList());
+        dto.setRegistrationDetails(detailsDTOs);
 
-        if (student != null) {
-            dto.setStudentName(student.getFirstName() + " " + student.getLastName());
-        }
-
-        if (program != null) {
-            dto.setProgramName(program.getProgramName());
-            dto.setProgramDuration(program.getDurationMonths());
-            dto.setProgramFee(program.getFee());
-        }
+        // Convert payments
+        List<PaymentDTO> paymentDTOs = registration.getPayments().stream()
+                .map(payment -> new PaymentDTO(
+                        payment.getId(),
+                        registration.getId(),
+                        payment.getAmount(),
+                        payment.getPaymentDate(),
+                        payment.getPaymentMethod().name(),
+                        payment.getStatus().name()
+                ))
+                .collect(Collectors.toList());
+        dto.setPayments(paymentDTOs);
 
         return dto;
-    }
-
-    private List<RegistrationDTO> convertToDTOList(List<Registration> registrations) {
-        List<RegistrationDTO> dtoList = new ArrayList<>();
-        for (Registration registration : registrations) {
-            RegistrationDTO dto = convertToDTO(registration);
-            if (dto != null) {
-                dtoList.add(dto);
-            }
-        }
-        return dtoList;
     }
 }

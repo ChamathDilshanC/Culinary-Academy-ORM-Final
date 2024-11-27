@@ -116,4 +116,24 @@ public class StudentBOImpl implements StudentBO {
         return studentDAO.existsByPhone(phone);
     }
 
+    @Override
+    public List<StudentDTO> searchStudentsByPhone(String searchText) {
+        List<Student> students = studentDAO.searchByPhone(searchText);
+        ArrayList<StudentDTO> studentDTOs = new ArrayList<>();
+
+        for (Student student : students) {
+            studentDTOs.add(new StudentDTO(
+                    student.getStudentId(),
+                    student.getUser().getUserId(),
+                    student.getFirstName(),
+                    student.getLastName(),
+                    student.getEmail(),
+                    student.getPhoneNumber(),
+                    student.getAddress(),
+                    student.getRegistrationDate()
+            ));
+        }
+        return studentDTOs;
+    }
+
 }

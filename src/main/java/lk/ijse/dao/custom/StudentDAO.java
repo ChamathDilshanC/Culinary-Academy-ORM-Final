@@ -9,4 +9,5 @@ public interface StudentDAO extends CrudDAO<Student> {
     Integer getCurrentId() throws Exception;
     boolean existsByEmail(String email) throws Exception;
     boolean existsByPhone(String phone) throws Exception;
+    List<Student> searchByPhone(String searchText);
 }

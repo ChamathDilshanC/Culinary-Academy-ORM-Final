@@ -1,54 +1,48 @@
 package lk.ijse.dto;
 
-import lk.ijse.entity.Payment.PaymentMethod;
-import lk.ijse.entity.Payment.PaymentStatus;
-import lk.ijse.entity.Registration;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class PaymentDTO {
-    private Integer paymentId;
-    private Integer registrationId;
-    private BigDecimal amount;
+    private int id;
+    private int registrationId;
+    private double amount;
     private LocalDateTime paymentDate;
-    private PaymentMethod paymentMethod;
-    private PaymentStatus status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String paymentMethod;
+    private String status;
 
     public PaymentDTO() {
     }
 
-    public PaymentDTO(Integer registrationId, BigDecimal amount, PaymentMethod paymentMethod) {
+    public PaymentDTO(int id, int registrationId, double amount, LocalDateTime paymentDate, String paymentMethod, String status) {
+        this.id = id;
         this.registrationId = registrationId;
         this.amount = amount;
+        this.paymentDate = paymentDate;
         this.paymentMethod = paymentMethod;
-        this.paymentDate = LocalDateTime.now();
-        this.status = PaymentStatus.PENDING;
+        this.status = status;
     }
 
-    public Integer getPaymentId() {
-        return paymentId;
+    public int getId() {
+        return id;
     }
 
-    public void setPaymentId(Integer paymentId) {
-        this.paymentId = paymentId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Integer getRegistrationId() {
+    public int getRegistrationId() {
         return registrationId;
     }
 
-    public void setRegistrationId(Integer registrationId) {
+    public void setRegistrationId(int registrationId) {
         this.registrationId = registrationId;
     }
 
-    public BigDecimal getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -60,38 +54,19 @@ public class PaymentDTO {
         this.paymentDate = paymentDate;
     }
 
-    public PaymentMethod getPaymentMethod() {
+    public String getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
+    public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
-    public PaymentStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(PaymentStatus status) {
+    public void setStatus(String status) {
         this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void setStatus(Registration.PaymentStatus value) {
     }
 }

@@ -1,7 +1,6 @@
 package lk.ijse.entity;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -9,49 +8,46 @@ import java.time.LocalDateTime;
 public class Payment {
     public enum PaymentMethod {
         CASH,
-        CARD,
-        BANK_TRANSFER
-    }
-
-    public enum PaymentStatus {
-        PENDING,
-        COMPLETED,
-        FAILED,
-        REFUNDED
+        CREDIT_CARD,
+        DEBIT_CARD,
+        BANK_TRANSFER,
+        ONLINE_PAYMENT
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer paymentId;
+    @Column(name = "id")
+    private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "registrationId", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registration_id", nullable = false)
     private Registration registration;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal amount;
+    @Column(name = "amount", precision = 10, scale = 2, nullable = false)
+    private Double amount;
 
-    @Column(nullable = false)
+    @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentStatus status;
+    @Column(name = "status", nullable = false)
+    private Registration.PaymentStatus status;
 
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    public Payment() {
-    }
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        paymentDate = LocalDateTime.now();
     }
 
     @PreUpdate
@@ -59,67 +55,30 @@ public class Payment {
         updatedAt = LocalDateTime.now();
     }
 
-    public Integer getPaymentId() {
-        return paymentId;
-    }
+    // Getters and Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public void setPaymentId(Integer paymentId) {
-        this.paymentId = paymentId;
-    }
-
-    public Registration getRegistration() {
-        return registration;
-    }
-
+    public Registration getRegistration() { return registration; }
     public void setRegistration(Registration registration) {
         this.registration = registration;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public LocalDateTime getPaymentDate() {
-        return paymentDate;
-    }
-
+    public LocalDateTime getPaymentDate() { return paymentDate; }
     public void setPaymentDate(LocalDateTime paymentDate) {
         this.paymentDate = paymentDate;
     }
 
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
-    }
-
+    public PaymentMethod getPaymentMethod() { return paymentMethod; }
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
-    public PaymentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PaymentStatus status) {
+    public Registration.PaymentStatus getStatus() { return status; }
+    public void setStatus(Registration.PaymentStatus status) {
         this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

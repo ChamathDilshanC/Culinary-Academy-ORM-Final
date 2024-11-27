@@ -2,42 +2,70 @@ package lk.ijse.dao.custom.impl;
 
 import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.dao.custom.RegistrationDAO;
-import lk.ijse.entity.Registration;
-import lk.ijse.entity.Registration.PaymentStatus;
+import lk.ijse.entity.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
 import java.util.List;
 
 public class RegistrationDAOImpl implements RegistrationDAO {
+
     @Override
-    public boolean save(Registration registration) throws Exception {
+    public boolean save(Registration entity) throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
         try {
-            session.persist(registration);
+            // 1. Verify and set the Student
+            Student student = session.get(Student.class, entity.getStudent().getStudentId());
+            if (student == null) {
+                throw new RuntimeException("Student not found");
+            }
+            entity.setStudent(student);
+
+            // 2. Verify and set Programs for each Registration Detail
+            for (RegistrationDetails detail : entity.getRegistrationDetails()) {
+                Program program = session.get(Program.class, detail.getProgram().getProgramId());
+                if (program == null) {
+                    throw new RuntimeException("Program not found: " + detail.getProgram().getProgramId());
+                }
+                detail.setProgram(program);
+                detail.setRegistration(entity);  // Set bidirectional relationship
+            }
+
+            // 3. Set Registration reference for Payments
+            for (Payment payment : entity.getPayments()) {
+                payment.setRegistration(entity);  // Set bidirectional relationship
+            }
+
+            // 4. Save the Registration (cascade will handle details and payments)
+            session.save(entity);
+
             transaction.commit();
             return true;
         } catch (Exception e) {
             transaction.rollback();
-            throw new Exception("Failed to save registration: " + e.getMessage());
+            throw new RuntimeException("Error saving registration: " + e.getMessage(), e);
         } finally {
             session.close();
         }
     }
 
     @Override
-    public boolean update(Registration registration) throws Exception {
+    public boolean update(Registration entity) throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
         try {
-            session.merge(registration);
+            Student student = session.get(Student.class, entity.getStudent().getStudentId());
+            if (student == null) {
+                throw new RuntimeException("Student not found");
+            }
+            entity.setStudent(student);
+            session.update(entity);
             transaction.commit();
             return true;
         } catch (Exception e) {
             transaction.rollback();
-            throw new Exception("Failed to update registration: " + e.getMessage());
+            throw new RuntimeException("Error updating registration: " + e.getMessage(), e);
         } finally {
             session.close();
         }
@@ -48,16 +76,16 @@ public class RegistrationDAOImpl implements RegistrationDAO {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
         try {
-            Registration registration = session.get(Registration.class, Integer.valueOf(id));
+            Registration registration = session.get(Registration.class, Integer.parseInt(id));
             if (registration != null) {
-                session.remove(registration);
+                session.delete(registration);
                 transaction.commit();
                 return true;
             }
             return false;
         } catch (Exception e) {
             transaction.rollback();
-            throw new Exception("Failed to delete registration: " + e.getMessage());
+            throw new RuntimeException("Error deleting registration: " + e.getMessage(), e);
         } finally {
             session.close();
         }
@@ -67,118 +95,66 @@ public class RegistrationDAOImpl implements RegistrationDAO {
     public Registration search(String id) throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
-            return session.get(Registration.class, Integer.valueOf(id));
+            return session.get(Registration.class, Integer.parseInt(id));
         } catch (Exception e) {
-            throw new Exception("Failed to search registration: " + e.getMessage());
+            throw new RuntimeException("Error searching registration: " + e.getMessage(), e);
         } finally {
             session.close();
         }
     }
 
+    // RegistrationDAOImpl.java
     @Override
     public List<Registration> getAll() throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
-            String hql = "FROM Registration r ORDER BY r.registrationDate DESC";
-            Query<Registration> query = session.createQuery(hql, Registration.class);
-            return query.list();
+            // Using JOIN FETCH to avoid the MultipleBagFetchException
+            Query<Registration> query = session.createQuery(
+                    "SELECT DISTINCT r FROM Registration r " +
+                            "LEFT JOIN FETCH r.registrationDetails " +
+                            "LEFT JOIN FETCH r.payments " +
+                            "LEFT JOIN FETCH r.student " +
+                            "ORDER BY r.id DESC",
+                    Registration.class
+            );
+            return query.getResultList();
         } catch (Exception e) {
-            throw new Exception("Failed to get all registrations: " + e.getMessage());
+            throw new RuntimeException("Error getting all registrations: " + e.getMessage(), e);
         } finally {
             session.close();
         }
     }
 
     @Override
-    public List<Registration> findByStudentId(String studentId) throws Exception {
+    public String getLastId() throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
-            String hql = "FROM Registration r WHERE r.student.id = :studentId " +
-                    "ORDER BY r.registrationDate DESC";
-            Query<Registration> query = session.createQuery(hql, Registration.class);
-            query.setParameter("studentId", Integer.valueOf(studentId));
-            return query.list();
+            Query<Integer> query = session.createQuery(
+                    "SELECT r.id FROM Registration r ORDER BY r.id DESC",
+                    Integer.class
+            );
+            query.setMaxResults(1);
+            Integer lastId = query.uniqueResult();
+            return lastId != null ? String.format("%03d", lastId) : "000";
         } catch (Exception e) {
-            throw new Exception("Failed to find registrations by student: " + e.getMessage());
+            throw new RuntimeException("Error getting last registration id: " + e.getMessage(), e);
         } finally {
             session.close();
         }
     }
 
     @Override
-    public List<Registration> findByProgramId(String programId) throws Exception {
+    public List<Registration> findByStudent(String studentId) throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
-            String hql = "FROM Registration r WHERE r.program.id = :programId " +
-                    "ORDER BY r.registrationDate DESC";
-            Query<Registration> query = session.createQuery(hql, Registration.class);
-            query.setParameter("programId", programId);
-            return query.list();
+            Query<Registration> query = session.createQuery(
+                    "FROM Registration r WHERE r.student.studentId = :studentId",
+                    Registration.class
+            );
+            query.setParameter("studentId", Integer.parseInt(studentId));
+            return query.getResultList();
         } catch (Exception e) {
-            throw new Exception("Failed to find registrations by program: " + e.getMessage());
-        } finally {
-            session.close();
-        }
-    }
-
-    @Override
-    public List<Registration> findByPaymentStatus(PaymentStatus status) throws Exception {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        try {
-            String hql = "FROM Registration r WHERE r.paymentStatus = :status " +
-                    "ORDER BY r.registrationDate DESC";
-            Query<Registration> query = session.createQuery(hql, Registration.class);
-            query.setParameter("status", status);
-            return query.list();
-        } catch (Exception e) {
-            throw new Exception("Failed to find registrations by status: " + e.getMessage());
-        } finally {
-            session.close();
-        }
-    }
-
-    @Override
-    public boolean existsByStudentAndProgram(String studentId, String programId) throws Exception {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        try {
-            String hql = "SELECT COUNT(r) FROM Registration r " +
-                    "WHERE r.student.id = :studentId AND r.program.id = :programId";
-            Query<Long> query = session.createQuery(hql, Long.class);
-            query.setParameter("studentId", Integer.valueOf(studentId));
-            query.setParameter("programId", programId);
-            return query.uniqueResult() > 0;
-        } catch (Exception e) {
-            throw new Exception("Failed to check student registration: " + e.getMessage());
-        } finally {
-            session.close();
-        }
-    }
-
-    @Override
-    public List<Registration> findRecentRegistrations() throws Exception {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        try {
-            String hql = "FROM Registration r ORDER BY r.registrationDate DESC";
-            Query<Registration> query = session.createQuery(hql, Registration.class);
-            query.setMaxResults(10);
-            return query.list();
-        } catch (Exception e) {
-            throw new Exception("Failed to get recent registrations: " + e.getMessage());
-        } finally {
-            session.close();
-        }
-    }
-
-    @Override
-    public Integer getNextId() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        try {
-            String hql = "SELECT COALESCE(MAX(r.registrationId), 0) FROM Registration r";
-            Query<Integer> query = session.createQuery(hql, Integer.class);
-            return query.uniqueResult() + 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 1;
+            throw new RuntimeException("Error finding registrations by student: " + e.getMessage(), e);
         } finally {
             session.close();
         }

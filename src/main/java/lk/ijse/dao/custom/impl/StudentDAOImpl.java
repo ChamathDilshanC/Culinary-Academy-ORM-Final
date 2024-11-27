@@ -117,6 +117,22 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
+    public List<Student> searchByPhone(String searchText) {
+        Session session = FactoryConfiguration.getInstance().getSession();
+        try {
+            Query<Student> query = session.createQuery(
+                    "FROM Student s WHERE s.phoneNumber LIKE :searchText",
+                    Student.class);
+            query.setParameter("searchText", "%" + searchText + "%");
+            return query.getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error searching students by phone: " + e.getMessage(), e);
+        } finally {
+            session.close();
+        }
+    }
+
+    @Override
     public Integer getCurrentId() throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {

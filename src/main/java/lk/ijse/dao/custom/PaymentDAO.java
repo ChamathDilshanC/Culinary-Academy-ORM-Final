@@ -5,8 +5,7 @@ import lk.ijse.entity.Payment;
 import java.util.List;
 
 public interface PaymentDAO extends CrudDAO<Payment> {
+    String getLastId() throws Exception;
     List<Payment> findByRegistrationId(String registrationId) throws Exception;
-    List<Payment> findByStatus(Payment.PaymentStatus status) throws Exception;
-    Payment findLatestPaymentByRegistration(String registrationId) throws Exception;
-    boolean existsByRegistrationId(String registrationId) throws Exception;
+    double getTotalPaymentsByRegistrationId(String registrationId) throws Exception;
 }
