@@ -23,7 +23,7 @@ public class Program {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @OneToMany(mappedBy = "program", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "program", fetch = FetchType.EAGER)
     private List<RegistrationDetails> registrationDetails = new ArrayList<>();
 
     public Program() {
@@ -37,50 +37,23 @@ public class Program {
         this.description = description;
     }
 
-    public String getProgramId() {
-        return programId;
-    }
+    // Getters and Setters
+    public String getProgramId() { return programId; }
+    public void setProgramId(String programId) { this.programId = programId; }
 
-    public void setProgramId(String programId) {
-        this.programId = programId;
-    }
+    public String getProgramName() { return programName; }
+    public void setProgramName(String programName) { this.programName = programName; }
 
-    public String getProgramName() {
-        return programName;
-    }
+    public int getDurationMonths() { return durationMonths; }
+    public void setDurationMonths(int durationMonths) { this.durationMonths = durationMonths; }
 
-    public void setProgramName(String programName) {
-        this.programName = programName;
-    }
+    public double getFee() { return fee; }
+    public void setFee(double fee) { this.fee = fee; }
 
-    public int getDurationMonths() {
-        return durationMonths;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setDurationMonths(int durationMonths) {
-        this.durationMonths = durationMonths;
-    }
-
-    public double getFee() {
-        return fee;
-    }
-
-    public void setFee(double fee) {
-        this.fee = fee;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<RegistrationDetails> getRegistrationDetails() {
-        return registrationDetails;
-    }
-
+    public List<RegistrationDetails> getRegistrationDetails() { return registrationDetails; }
     public void setRegistrationDetails(List<RegistrationDetails> registrationDetails) {
         this.registrationDetails = registrationDetails;
     }

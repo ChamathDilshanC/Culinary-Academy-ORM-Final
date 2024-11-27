@@ -2,7 +2,6 @@ package lk.ijse.entity;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class Registration {
     @Column(name = "id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
@@ -40,7 +39,6 @@ public class Registration {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "registration", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Fetch(FetchMode.SUBSELECT)
     private List<RegistrationDetails> registrationDetails = new ArrayList<>();
 
     @OneToMany(mappedBy = "registration", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -59,7 +57,7 @@ public class Registration {
         updatedAt = LocalDateTime.now();
     }
 
-    // Updated Getters and Setters
+    // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
