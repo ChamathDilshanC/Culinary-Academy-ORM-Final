@@ -33,7 +33,8 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <!-- Status Badge -->
                 <VBox alignment="CENTER" styleClass="status-badge">
-                    <FontAwesomeIconView glyphName="CLOCK_O" styleClass="status-icon"/>
+                    <!-- Replace CLOCK_O with a valid icon -->
+                    <FontAwesomeIconView glyphName="CLOCK" styleClass="status-icon"/>
                     <Label fx:id="lblRegistrationStatus" text="New Registration" styleClass="status-text"/>
                 </VBox>
             </HBox>

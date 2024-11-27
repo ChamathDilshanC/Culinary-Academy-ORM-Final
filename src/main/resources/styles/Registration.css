@@ -253,7 +253,7 @@
 }
 
 .btn-icon {
-    -fx-fill: currentColor;
+    -fx-fill: -fx-text-fill;
     -fx-font-size: 14px;
 }
 
@@ -270,10 +270,27 @@
     -fx-font-size: 14px;
 }
 
+.btn-primary .btn-icon {
+    -fx-fill: white;
+}
+
+.btn-secondary .btn-icon {
+    -fx-fill: -fx-text;
+}
+
+.btn-success .btn-icon {
+    -fx-fill: white;
+}
+
 .status-text {
     -fx-text-fill: white;
     -fx-font-size: 13px;
 }
+.delete-icon {
+    -fx-fill: -fx-error;
+    -fx-font-size: 14px;
+}
+
 
 .status-pending {
     -fx-background-color: rgba(245,158,11,0.1);
@@ -387,4 +404,22 @@
 .separator .line {
     -fx-border-color: -fx-border;
     -fx-border-width: 0.5px;
+}
+
+.btn-icon-only {
+    -fx-background-color: transparent;
+    -fx-padding: 6px;
+    -fx-background-radius: 4px;
+}
+
+.btn-icon-only:hover {
+    -fx-background-color: rgba(239,68,68,0.1);
+}
+
+.btn-danger {
+    -fx-text-fill: -fx-error;
+}
+
+.btn-danger:hover {
+    -fx-background-color: rgba(239,68,68,0.2);
 }

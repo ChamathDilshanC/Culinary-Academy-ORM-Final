@@ -3,9 +3,13 @@ package lk.ijse.dao.custom.impl;
 import lk.ijse.config.FactoryConfiguration;
 import lk.ijse.dao.custom.RegistrationDAO;
 import lk.ijse.entity.*;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public class RegistrationDAOImpl implements RegistrationDAO {
@@ -108,16 +112,13 @@ public class RegistrationDAOImpl implements RegistrationDAO {
     public List<Registration> getAll() throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
-            // Using JOIN FETCH to avoid the MultipleBagFetchException
             Query<Registration> query = session.createQuery(
-                    "SELECT DISTINCT r FROM Registration r " +
-                            "LEFT JOIN FETCH r.registrationDetails " +
-                            "LEFT JOIN FETCH r.payments " +
+                    "FROM Registration r " +
                             "LEFT JOIN FETCH r.student " +
                             "ORDER BY r.id DESC",
                     Registration.class
             );
-            return query.getResultList();
+            return new ArrayList<>(new LinkedHashSet<>(query.getResultList()));
         } catch (Exception e) {
             throw new RuntimeException("Error getting all registrations: " + e.getMessage(), e);
         } finally {

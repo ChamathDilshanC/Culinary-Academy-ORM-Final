@@ -39,11 +39,11 @@ public class Registration {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "registration", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Fetch(FetchMode.SUBSELECT)
     private List<RegistrationDetails> registrationDetails = new ArrayList<>();
 
-    @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "registration", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Fetch(FetchMode.SUBSELECT)
     private List<Payment> payments = new ArrayList<>();
 

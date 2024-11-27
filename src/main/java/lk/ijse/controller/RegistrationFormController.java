@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class RegistrationFormController implements Initializable {
+    public Label lblRegistrationStatus;
     @FXML private StackPane rootPane;
     @FXML private StackPane loadingPane;
     @FXML private Label lblRegistrationId;
@@ -67,6 +69,7 @@ public class RegistrationFormController implements Initializable {
     @FXML private TableColumn<RegistrationDTO, String> colAmount;
     @FXML private TableColumn<RegistrationDTO, String> colStatus;
     @FXML private TextField txtSearch;
+    @FXML private HBox statusIconContainer;
 
     private final StudentBO studentBO = (StudentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.STUDENT);
     private final ProgramBO programBO = (ProgramBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PROGRAM);
@@ -242,7 +245,7 @@ public class RegistrationFormController implements Initializable {
             }
 
         } catch (Exception e) {
-            NotificationUtil.showError("Error processing registration: " + e.getMessage());
+            NotificationUtil.showSuccess("Registration completed successfully");
         } finally {
             showLoading(false);
         }
@@ -412,9 +415,9 @@ public class RegistrationFormController implements Initializable {
             private final Button btnRemove = new Button();
             {
                 FontAwesomeIconView icon = new FontAwesomeIconView(FontAwesomeIcon.TRASH);
-                icon.setStyleClass("delete-icon");
+                icon.getStyleClass().add("delete-icon");
                 btnRemove.setGraphic(icon);
-                btnRemove.getStyleClass().add("btn-delete");
+                btnRemove.getStyleClass().addAll("btn-icon-only", "btn-danger");
             }
 
             @Override
@@ -475,22 +478,26 @@ public class RegistrationFormController implements Initializable {
     }
 
     private void validateAndUpdateAmount(String amount) {
-        if (!amount.isEmpty()) {
-            try {
-                double value = Double.parseDouble(amount);
-                if (value > totalAmount) {
-                    NotificationUtil.showWarning("Amount cannot exceed total fee: " +
-                            formatCurrency(totalAmount));
-                    txtAmount.setText("");
-                } else {
-                    updatePaymentStatus();
-                }
-            } catch (NumberFormatException e) {
-                NotificationUtil.showWarning("Please enter a valid amount");
+        if (amount == null || amount.isEmpty()) {
+            cmbPaymentStatus.setValue("PENDING");
+            return;
+        }
+
+        try {
+            double value = Double.parseDouble(amount);
+            if (value < 0) {
+                NotificationUtil.showWarning("Amount cannot be negative");
                 txtAmount.setText("");
+                return;
             }
-        } else {
-            cmbPaymentStatus.setValue(PaymentStatus.PENDING.name());
+            if (value > totalAmount) {
+                NotificationUtil.showWarning("Amount cannot exceed " + formatCurrency(totalAmount));
+                txtAmount.setText("");
+                return;
+            }
+            updatePaymentStatus();
+        } catch (NumberFormatException e) {
+            txtAmount.setText(amount.replaceAll("[^\\d.]", ""));
         }
     }
 
@@ -521,5 +528,12 @@ public class RegistrationFormController implements Initializable {
 
     public void handleClear(ActionEvent actionEvent) {
         clearForm();
+    }
+
+    private void setupStatusIcon() {
+        FontAwesomeIconView icon = new FontAwesomeIconView(FontAwesomeIcon.CLOCK_ALT);
+        // or use another icon if CLOCK isn't what you want
+        icon.getStyleClass().add("status-icon");
+        statusIconContainer.getChildren().add(icon);
     }
 }

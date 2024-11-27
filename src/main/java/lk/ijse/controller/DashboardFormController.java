@@ -164,7 +164,7 @@ public class DashboardFormController implements Initializable {
     @FXML
     public void loadRegistrations() {
         loadFXML("Registrations.fxml");
-        NotificationUtil.showSuccess("Registrations loaded successfully");
+        /*NotificationUtil.showSuccess("Registrations loaded successfully");*/
     }
 
     @FXML
