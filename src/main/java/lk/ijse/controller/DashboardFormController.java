@@ -1,20 +1,19 @@
 package lk.ijse.controller;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.application.Platform;
-import java.io.IOException;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ResourceBundle;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -25,6 +24,14 @@ import lk.ijse.dto.UserDTO;
 import lk.ijse.util.AlertUtil;
 import lk.ijse.util.NotificationUtil;
 
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 public class DashboardFormController implements Initializable {
 
     @FXML public Label labelUserId;
@@ -34,8 +41,16 @@ public class DashboardFormController implements Initializable {
     @FXML private Label userName;
     @FXML private Label userRole;
 
+    // Add buttons for restricted features
+    @FXML private Button btnPrograms;
+    @FXML private Button btnReports;
+    @FXML private Button btnUserManagement;
+
     private UserDTO currentUser;
     private final UserBO userBO = (UserBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.USER);
+
+    private final Map<String, Button> restrictedButtons = new HashMap<>();
+    private final Map<String, FontAwesomeIconView> lockIcons = new HashMap<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -49,6 +64,32 @@ public class DashboardFormController implements Initializable {
                 e.printStackTrace();
             }
         });
+    }
+
+    private void setupRoleBasedAccess() {
+        // Map buttons for easier access
+        restrictedButtons.put("programs", btnPrograms);
+        restrictedButtons.put("reports", btnReports);
+        restrictedButtons.put("userManagement", btnUserManagement);
+
+        // Add lock icons to restricted buttons if not admin
+        if (!userRole.getText().equals("ADMIN")) {
+            restrictedButtons.forEach((key, button) -> {
+                // Create lock icon
+                FontAwesomeIconView lockIcon = new FontAwesomeIconView(FontAwesomeIcon.LOCK);
+                lockIcon.getStyleClass().add("lock-icon");
+
+                // Add to button
+                HBox buttonContent = (HBox) button.getGraphic();
+                buttonContent.getChildren().add(lockIcon);
+
+                // Store lock icon reference
+                lockIcons.put(key, lockIcon);
+
+                // Disable button
+                button.setDisable(true);
+            });
+        }
     }
 
     private void setupWindowProperties() {
@@ -105,6 +146,7 @@ public class DashboardFormController implements Initializable {
                     }
                     if (userRole != null) {
                         userRole.setText(user.getRole().name());
+                        setupRoleBasedAccess(); // Initialize role-based access
                     }
                 } catch (Exception e) {
                     NotificationUtil.showError("Failed to initialize user data: " + e.getMessage());
@@ -115,6 +157,53 @@ public class DashboardFormController implements Initializable {
             NotificationUtil.showError("Error initializing user data: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    public void loadDashboard() {
+        loadFXML("dashboard_content.fxml");
+        NotificationUtil.showSuccess("Dashboard loaded successfully");
+    }
+
+    @FXML
+    public void loadStudents() {
+        loadFXML("StudentForm.fxml");
+        NotificationUtil.showSuccess("Student Management loaded successfully");
+    }
+
+    @FXML
+    public void loadCulinaryPrograms() {
+        if (!userRole.getText().equals("ADMIN")) {
+            NotificationUtil.showWarning("Access denied. Admin privileges required.");
+            return;
+        }
+        loadFXML("ProgramsForm.fxml");
+        NotificationUtil.showSuccess("Culinary Programs loaded successfully");
+    }
+
+    @FXML
+    public void loadRegistrations() {
+        loadFXML("Registrations.fxml");
+        NotificationUtil.showSuccess("Registrations loaded successfully");
+    }
+
+    @FXML
+    public void loadReports() {
+        if (!userRole.getText().equals("ADMIN")) {
+            NotificationUtil.showWarning("Access denied. Admin privileges required.");
+            return;
+        }
+        NotificationUtil.showWarning("Reports module coming soon!");
+    }
+
+    @FXML
+    public void loadUserManagement() {
+        if (!userRole.getText().equals("ADMIN")) {
+            NotificationUtil.showWarning("Access denied. Admin privileges required.");
+            return;
+        }
+        loadFXML("UserManagement.fxml");
+        NotificationUtil.showSuccess("User Management loaded successfully");
     }
 
     @FXML
@@ -141,41 +230,6 @@ public class DashboardFormController implements Initializable {
 
     private void clearUserSession() {
         currentUser = null;
-    }
-
-    @FXML
-    public void loadDashboard() {
-        loadFXML("dashboard_content.fxml");
-        NotificationUtil.showSuccess("Dashboard loaded successfully");
-    }
-
-    @FXML
-    public void loadStudents() {
-        loadFXML("StudentForm.fxml");
-        NotificationUtil.showSuccess("Student Management loaded successfully");
-    }
-
-    @FXML
-    public void loadCulinaryPrograms() {
-        loadFXML("ProgramsForm.fxml");
-        NotificationUtil.showSuccess("Culinary Programs loaded successfully");
-    }
-
-    @FXML
-    public void loadRegistrations() {
-        loadFXML("Registrations.fxml");
-        NotificationUtil.showSuccess("Registrations loaded successfully");
-    }
-
-    @FXML
-    public void loadReports() {
-        NotificationUtil.showWarning("Reports module coming soon!");
-    }
-
-    @FXML
-    public void loadUserManagement() {
-            loadFXML("UserManagement.fxml");
-            NotificationUtil.showSuccess("User Management loaded successfully");
     }
 
     public void loadFXML(String fxmlFile) {
@@ -214,7 +268,10 @@ public class DashboardFormController implements Initializable {
         Platform.runLater(() -> {
             try {
                 if (userName != null) userName.setText(username);
-                if (userRole != null) userRole.setText(role);
+                if (userRole != null) {
+                    userRole.setText(role);
+                    setupRoleBasedAccess(); // Update access when role changes
+                }
             } catch (Exception e) {
                 NotificationUtil.showError("Error setting user info: " + e.getMessage());
             }
@@ -233,7 +290,6 @@ public class DashboardFormController implements Initializable {
         }
     }
 
-    // Method to refresh the dashboard content
     public void refreshDashboard() {
         loadDefaultView();
     }
@@ -247,6 +303,4 @@ public class DashboardFormController implements Initializable {
             Platform.exit();
         }
     }
-
-
 }

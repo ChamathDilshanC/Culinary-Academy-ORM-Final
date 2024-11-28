@@ -19,12 +19,18 @@ public class Payment {
     @Column(name = "id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "registration_id", nullable = false)
     private Registration registration;
 
+    @Column(name = "total_amount", precision = 10, scale = 2, nullable = false)
+    private Double totalAmount = 0.0;
+
     @Column(name = "amount", precision = 10, scale = 2, nullable = false)
-    private Double amount;
+    private Double amount = 0.0;
+
+    @Column(name = "balance", precision = 10, scale = 2, nullable = false)
+    private Double balance = 0.0;
 
     @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
@@ -64,8 +70,20 @@ public class Payment {
         this.registration = registration;
     }
 
+    public Double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
     public Double getAmount() { return amount; }
-    public void setAmount(Double amount) { this.amount = amount; }
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getBalance() { return balance; }
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
 
     public LocalDateTime getPaymentDate() { return paymentDate; }
     public void setPaymentDate(LocalDateTime paymentDate) {
@@ -81,4 +99,7 @@ public class Payment {
     public void setStatus(Registration.PaymentStatus status) {
         this.status = status;
     }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

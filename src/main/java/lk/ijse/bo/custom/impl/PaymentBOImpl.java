@@ -34,12 +34,13 @@ public class PaymentBOImpl implements PaymentBO {
             Payment payment = new Payment();
             payment.setRegistration(registration);
             payment.setAmount(dto.getAmount());
+            payment.setTotalAmount(dto.getTotalAmount());
+            payment.setBalance(dto.getBalance());
             payment.setPaymentDate(dto.getPaymentDate());
             payment.setPaymentMethod(Payment.PaymentMethod.valueOf(dto.getPaymentMethod()));
             payment.setStatus(Registration.PaymentStatus.valueOf(dto.getStatus()));
 
             session.save(payment);
-
             // Update registration payment status
             updateRegistrationPaymentStatus(registration, session);
 
@@ -143,10 +144,14 @@ public class PaymentBOImpl implements PaymentBO {
         return new PaymentDTO(
                 payment.getId(),
                 payment.getRegistration().getId(),
+                payment.getTotalAmount(),
                 payment.getAmount(),
+                payment.getBalance(),
                 payment.getPaymentDate(),
                 payment.getPaymentMethod().name(),
-                payment.getStatus().name()
+                payment.getStatus().name(),
+                payment.getCreatedAt(),
+                payment.getUpdatedAt()
         );
     }
 

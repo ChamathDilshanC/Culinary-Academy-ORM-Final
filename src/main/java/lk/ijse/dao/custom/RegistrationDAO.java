@@ -7,4 +7,5 @@ import java.util.List;
 public interface RegistrationDAO extends CrudDAO<Registration> {
     String getLastId() throws Exception;
     List<Registration> findByStudent(String studentId) throws Exception;
+    boolean isStudentRegisteredForProgram(Integer studentId, String programId) throws Exception;
 }

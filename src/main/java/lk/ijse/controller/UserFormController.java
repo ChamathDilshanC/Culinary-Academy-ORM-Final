@@ -191,9 +191,6 @@ public class UserFormController implements Initializable {
             resetFieldValidation(txtPassword, lblPasswordValidation, passwordValidationContainer);
             resetFieldValidation(txtPasswordVisible, lblPasswordValidation, passwordValidationContainer);
         }
-
-        // Update save button state
-        btnSave.setDisable(isValid);
     }
 
     private void updateFieldValidation(TextField field, Label validationLabel,
@@ -230,7 +227,7 @@ public class UserFormController implements Initializable {
         tblUser.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 populateFields(newSelection);
-                btnSave.setDisable(true);
+                btnSave.setDisable(false);
                 btnUpdate.setDisable(false);
                 btnDelete.setDisable(false);
             }
@@ -250,9 +247,14 @@ public class UserFormController implements Initializable {
                 editButton.setOnAction(event -> {
                     UserDTO user = getTableView().getItems().get(getIndex());
                     populateFields(user);
+                    // Disable save button when editing
                     btnSave.setDisable(true);
                     btnUpdate.setDisable(false);
                     btnDelete.setDisable(false);
+                    // Show form if hidden
+                    if (!isFormVisible) {
+                        btnShowHideFormOnAction();
+                    }
                 });
 
                 deleteButton.setOnAction(event -> {
@@ -319,7 +321,14 @@ public class UserFormController implements Initializable {
         LocalDateTime lastLogin = user.getLastLogin();
         lblLastLogin.setText("Last Login: " + (lastLogin != null ? lastLogin.format(formatter) : "Never"));
 
-        validateField(); // Validate fields after populating
+        // When populating from table selection
+        if (tblUser.getSelectionModel().getSelectedItem() != null) {
+            btnSave.setDisable(true);
+            btnUpdate.setDisable(false);
+            btnDelete.setDisable(false);
+        }
+
+        validateField();
     }
 
     @FXML
@@ -333,7 +342,7 @@ public class UserFormController implements Initializable {
     @FXML
     private void btnSaveOnAction() {
         if (!validateInputs()) return;
-        btnSave.setDisable(true);
+        btnSave.setDisable(false);
 
         try {
             if (userBO.existsByUsername(txtUsername.getText())) {
@@ -448,6 +457,7 @@ public class UserFormController implements Initializable {
         cmbRole.setValue(null);
         lblLastLogin.setText("Last Login: Never");
 
+        // Reset buttons to default state
         btnSave.setDisable(false);
         btnUpdate.setDisable(true);
         btnDelete.setDisable(true);

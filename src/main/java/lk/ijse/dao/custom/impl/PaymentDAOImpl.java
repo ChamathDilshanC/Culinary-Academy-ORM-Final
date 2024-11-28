@@ -15,6 +15,7 @@ public class PaymentDAOImpl implements PaymentDAO {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
         try {
+            entity.setBalance(entity.getTotalAmount() - entity.getAmount());
             session.save(entity);
             transaction.commit();
             return true;
@@ -25,7 +26,6 @@ public class PaymentDAOImpl implements PaymentDAO {
             session.close();
         }
     }
-
     @Override
     public boolean update(Payment entity) throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
@@ -126,15 +126,23 @@ public class PaymentDAOImpl implements PaymentDAO {
     public double getTotalPaymentsByRegistrationId(String registrationId) throws Exception {
         Session session = FactoryConfiguration.getInstance().getSession();
         try {
-            Query<Double> query = session.createQuery(
-                    "SELECT SUM(p.amount) FROM Payment p WHERE p.registration.id = :regId",
-                    Double.class
+            Query<Object[]> query = session.createQuery(
+                    "SELECT SUM(p.amount), p.totalAmount FROM Payment p " +
+                            "WHERE p.registration.id = :regId " +
+                            "GROUP BY p.totalAmount",
+                    Object[].class
             );
             query.setParameter("regId", Integer.parseInt(registrationId));
-            Double total = query.uniqueResult();
-            return total != null ? total : 0.0;
+
+            Object[] result = query.uniqueResult();
+            if (result != null) {
+                Double totalPaid = (Double) result[0];
+                Double totalAmount = (Double) result[1];
+                return totalAmount - (totalPaid != null ? totalPaid : 0.0);
+            }
+            return 0.0;
         } catch (Exception e) {
-            throw new RuntimeException("Error calculating total payments: " + e.getMessage(), e);
+            throw new RuntimeException("Error calculating balance: " + e.getMessage(), e);
         } finally {
             session.close();
         }

@@ -16,11 +16,11 @@ import javafx.scene.layout.StackPane;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import lk.ijse.bo.BOFactory;
+import lk.ijse.bo.custom.PaymentBO;
 import lk.ijse.bo.custom.ProgramBO;
 import lk.ijse.bo.custom.RegistrationBO;
 import lk.ijse.bo.custom.StudentBO;
 import lk.ijse.dto.*;
-import lk.ijse.entity.Registration;
 import lk.ijse.entity.Registration.PaymentStatus;
 import lk.ijse.util.AlertUtil;
 import lk.ijse.util.NotificationUtil;
@@ -33,10 +33,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class RegistrationFormController implements Initializable {
-    public Label lblRegistrationStatus;
     @FXML private StackPane rootPane;
     @FXML private StackPane loadingPane;
     @FXML private Label lblRegistrationId;
+    @FXML private Label lblRegistrationStatus;
+    @FXML private Label lblBalance;
 
     // Student Section
     @FXML private ComboBox<String> cmbStudentId;
@@ -68,12 +69,14 @@ public class RegistrationFormController implements Initializable {
     @FXML private TableColumn<RegistrationDTO, String> colDate;
     @FXML private TableColumn<RegistrationDTO, String> colAmount;
     @FXML private TableColumn<RegistrationDTO, String> colStatus;
+    @FXML private TableColumn<RegistrationDTO, String> colBalance;
     @FXML private TextField txtSearch;
     @FXML private HBox statusIconContainer;
 
     private final StudentBO studentBO = (StudentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.STUDENT);
     private final ProgramBO programBO = (ProgramBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PROGRAM);
     private final RegistrationBO registrationBO = (RegistrationBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.REGISTRATION);
+    private final PaymentBO paymentBO = (PaymentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.PAYMENT);
 
     private final ObservableList<ProgramDTO> selectedPrograms = FXCollections.observableArrayList();
     private final ObservableList<RegistrationDTO> registrations = FXCollections.observableArrayList();
@@ -85,16 +88,12 @@ public class RegistrationFormController implements Initializable {
         initializeTables();
         setupEventHandlers();
         loadInitialData();
+        updateBalanceDisplay();
     }
 
     private void initializeTables() {
-        // Setup Selected Programs Table
         setupSelectedProgramsTable();
-
-        // Setup Recent Registrations Table
         setupRegistrationsTable();
-
-        // Setup Payment Methods
         setupPaymentMethods();
     }
 
@@ -131,9 +130,12 @@ public class RegistrationFormController implements Initializable {
                 new SimpleStringProperty(formatDateTime(data.getValue().getRegistrationDate())));
         colAmount.setCellValueFactory(data ->
                 new SimpleStringProperty(formatCurrency(calculateTotalAmount(data.getValue()))));
+        colBalance.setCellValueFactory(data ->
+                new SimpleStringProperty(formatCurrency(calculateBalance(data.getValue()))));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
 
         setupSearchFunctionality();
+        tblRegistrations.setItems(registrations);
     }
 
     private void setupPaymentMethods() {
@@ -141,23 +143,21 @@ public class RegistrationFormController implements Initializable {
                 "CASH", "CREDIT_CARD", "DEBIT_CARD", "BANK_TRANSFER", "ONLINE_PAYMENT"
         ));
         cmbPaymentStatus.setItems(FXCollections.observableArrayList(
-                Arrays.toString(PaymentStatus.values())
+                Arrays.stream(PaymentStatus.values())
+                        .map(Enum::name)
+                        .toList()
         ));
         cmbPaymentStatus.setValue(PaymentStatus.PENDING.name());
     }
 
     private void setupEventHandlers() {
-        // Student Selection Event
         cmbStudentId.setOnAction(e -> loadStudentDetails());
-
-        // Student Search Event
         txtStudentSearch.textProperty().addListener((obs, old, newValue) -> {
             if (newValue != null && !newValue.isEmpty()) {
                 searchStudents(newValue);
             }
         });
 
-        // Amount Validation
         txtAmount.textProperty().addListener((obs, old, newValue) -> {
             if (!newValue.matches("\\d*\\.?\\d*")) {
                 txtAmount.setText(old);
@@ -165,101 +165,7 @@ public class RegistrationFormController implements Initializable {
             validateAndUpdateAmount(newValue);
         });
 
-        // Clear Form Button
         cmbPaymentMethod.setOnAction(e -> updatePaymentStatus());
-    }
-
-    @FXML
-    private void handleAddProgram() {
-        if (cmbProgram.getValue() == null) {
-            NotificationUtil.showWarning("Please select a program");
-            return;
-        }
-
-        try {
-            ProgramDTO program = programBO.searchProgram(cmbProgram.getValue());
-            if (program == null) {
-                NotificationUtil.showError("Program not found");
-                return;
-            }
-
-            if (selectedPrograms.stream()
-                    .noneMatch(p -> p.getProgramId().equals(program.getProgramId()))) {
-                selectedPrograms.add(program);
-                updateTotalAmount();
-                cmbProgram.setValue(null);
-            } else {
-                NotificationUtil.showWarning("Program already added");
-            }
-        } catch (Exception e) {
-            NotificationUtil.showError("Error adding program: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleRegister() {
-        if (!validateRegistration()) {
-            return;
-        }
-
-        try {
-            showLoading(true);
-
-            // Create Registration
-            StudentDTO studentDTO = studentBO.searchStudent(cmbStudentId.getValue());
-            if (studentDTO == null) {
-                NotificationUtil.showError("Student not found");
-                return;
-            }
-
-            RegistrationDTO registrationDTO = new RegistrationDTO();
-            registrationDTO.setStudentId(studentDTO.getStudentId());
-            registrationDTO.setRegistrationDate(LocalDateTime.now());
-            registrationDTO.setPaymentStatus(calculatePaymentStatus());
-
-            // Add Registration Details
-            for (ProgramDTO program : selectedPrograms) {
-                RegistrationDetailsDTO detailDTO = new RegistrationDetailsDTO();
-                detailDTO.setProgramId(program.getProgramId());
-                detailDTO.setProgramName(program.getProgramName());
-                detailDTO.setFee(program.getFee());
-                registrationDTO.getRegistrationDetails().add(detailDTO);
-            }
-
-            // Add Payment if exists
-            if (!txtAmount.getText().isEmpty() && cmbPaymentMethod.getValue() != null) {
-                PaymentDTO paymentDTO = new PaymentDTO();
-                paymentDTO.setAmount(Double.parseDouble(txtAmount.getText()));
-                paymentDTO.setPaymentDate(LocalDateTime.now());
-                paymentDTO.setPaymentMethod(cmbPaymentMethod.getValue());
-                paymentDTO.setStatus(registrationDTO.getPaymentStatus());
-                registrationDTO.getPayments().add(paymentDTO);
-            }
-
-            // Save Registration
-            if (registrationBO.saveRegistration(registrationDTO)) {
-                NotificationUtil.showSuccess("Registration completed successfully");
-                clearForm();
-                loadRegistrations();
-                generateNewRegistrationId();
-            }
-
-        } catch (Exception e) {
-            NotificationUtil.showSuccess("Registration completed successfully");
-        } finally {
-            showLoading(false);
-        }
-    }
-
-    private String calculatePaymentStatus() {
-        double paidAmount = txtAmount.getText().isEmpty() ? 0.0 :
-                Double.parseDouble(txtAmount.getText());
-        if (paidAmount >= totalAmount) {
-            return PaymentStatus.COMPLETED.name();
-        } else if (paidAmount > 0) {
-            return PaymentStatus.PARTIAL.name();
-        }
-        return PaymentStatus.PENDING.name();
     }
 
     private void loadStudentDetails() {
@@ -291,6 +197,146 @@ public class RegistrationFormController implements Initializable {
             }
         } catch (Exception e) {
             NotificationUtil.showError("Error searching students: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleAddProgram() {
+        if (cmbProgram.getValue() == null) {
+            NotificationUtil.showWarning("Please select a program");
+            return;
+        }
+
+        if (cmbStudentId.getValue() == null) {
+            NotificationUtil.showWarning("Please select a student first");
+            return;
+        }
+
+        try {
+            String studentId = cmbStudentId.getValue();
+            String programId = cmbProgram.getValue();
+
+            // First check if student exists
+            StudentDTO student = studentBO.searchStudent(studentId);
+            if (student == null) {
+                NotificationUtil.showError("Student not found");
+                return;
+            }
+
+            // Check if student already registered for this program
+            if (registrationBO.isStudentRegisteredForProgram(studentId, programId)) {
+                NotificationUtil.showWarning("Student already registered for this program!");
+                return;
+            }
+
+            // If not registered, proceed with adding program
+            ProgramDTO program = programBO.searchProgram(programId);
+            if (program == null) {
+                NotificationUtil.showError("Program not found");
+                return;
+            }
+
+            // Check if program already added to current registration
+            if (selectedPrograms.stream()
+                    .noneMatch(p -> p.getProgramId().equals(program.getProgramId()))) {
+
+                // Add program to selected list
+                selectedPrograms.add(program);
+
+                // Update amounts
+                updateTotalAmount();
+
+                // Clear program selection
+                cmbProgram.setValue(null);
+
+                // Show success message
+                NotificationUtil.showSuccess("Program added successfully!");
+
+            } else {
+                NotificationUtil.showWarning("Program already added to current registration");
+            }
+
+        } catch (Exception e) {
+            NotificationUtil.showError("Error adding program: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleRegister() {
+        if (!validateRegistration()) return;
+
+        try {
+            showLoading(true);
+            StudentDTO studentDTO = studentBO.searchStudent(cmbStudentId.getValue());
+            if (studentDTO == null) {
+                NotificationUtil.showError("Student not found");
+                return;
+            }
+
+            // Create registration
+            RegistrationDTO registrationDTO = new RegistrationDTO();
+            registrationDTO.setStudentId(studentDTO.getStudentId());
+            registrationDTO.setRegistrationDate(LocalDateTime.now());
+            registrationDTO.setPaymentStatus(calculatePaymentStatus());
+
+            // Add registration details
+            for (ProgramDTO program : selectedPrograms) {
+                RegistrationDetailsDTO detailDTO = new RegistrationDetailsDTO();
+                detailDTO.setProgramId(program.getProgramId());
+                detailDTO.setProgramName(program.getProgramName());
+                detailDTO.setFee(program.getFee());
+                registrationDTO.getRegistrationDetails().add(detailDTO);
+            }
+
+            // Save registration
+            boolean registrationSaved = registrationBO.saveRegistration(registrationDTO);
+            if (!registrationSaved) {
+                NotificationUtil.showError("Failed to save registration");
+                return;
+            }
+
+            // Get the latest registration ID
+            String lastRegId = registrationBO.getLastRegistrationId();
+            if (lastRegId == null) {
+                NotificationUtil.showError("Could not get registration ID");
+                return;
+            }
+
+            // Now save payment if exists
+            if (!txtAmount.getText().isEmpty() && cmbPaymentMethod.getValue() != null) {
+                PaymentDTO paymentDTO = new PaymentDTO();
+
+                double programTotalAmount = selectedPrograms.stream()
+                        .mapToDouble(ProgramDTO::getFee)
+                        .sum();
+
+                double paidAmount = Double.parseDouble(txtAmount.getText().trim());
+
+                paymentDTO.setRegistrationId(Integer.parseInt(lastRegId));
+                paymentDTO.setTotalAmount(programTotalAmount);
+                paymentDTO.setAmount(paidAmount);
+                paymentDTO.setBalance(programTotalAmount - paidAmount);
+                paymentDTO.setPaymentDate(LocalDateTime.now());
+                paymentDTO.setPaymentMethod(cmbPaymentMethod.getValue());
+                paymentDTO.setStatus(cmbPaymentStatus.getValue());
+
+                if (paymentBO.savePayment(paymentDTO)) {
+                    NotificationUtil.showSuccess("Registration and payment completed successfully");
+                    clearForm();
+                    loadRegistrations();
+                    generateNewRegistrationId();
+                }
+            } else {
+                NotificationUtil.showSuccess("Registration completed successfully");
+                clearForm();
+                loadRegistrations();
+                generateNewRegistrationId();
+            }
+
+        } catch (Exception e) {
+            NotificationUtil.showError("Error during registration: " + e.getMessage());
+        } finally {
+            showLoading(false);
         }
     }
 
@@ -326,10 +372,61 @@ public class RegistrationFormController implements Initializable {
         return true;
     }
 
+    private void updateBalanceDisplay() {
+        double paid = txtAmount.getText().isEmpty() ? 0.0 : Double.parseDouble(txtAmount.getText());
+        double balance = totalAmount - paid;
+        lblBalance.setText(formatCurrency(balance));
+    }
+
+    private double calculateBalance(RegistrationDTO registration) {
+        double totalAmount = calculateTotalAmount(registration);
+        double paidAmount = registration.getPayments().stream()
+                .mapToDouble(PaymentDTO::getAmount)
+                .sum();
+        return totalAmount - paidAmount;
+    }
+
+    private void validateAndUpdateAmount(String amount) {
+        if (amount == null || amount.isEmpty()) {
+            cmbPaymentStatus.setValue(PaymentStatus.PENDING.name());
+            updateBalanceDisplay();
+            return;
+        }
+
+        try {
+            double value = Double.parseDouble(amount);
+            if (value < 0) {
+                NotificationUtil.showWarning("Amount cannot be negative");
+                txtAmount.setText("");
+                return;
+            }
+            if (value > totalAmount) {
+                NotificationUtil.showWarning("Amount cannot exceed " + formatCurrency(totalAmount));
+                txtAmount.setText("");
+                return;
+            }
+            updatePaymentStatus();
+            updateBalanceDisplay();
+        } catch (NumberFormatException e) {
+            txtAmount.setText(amount.replaceAll("[^\\d.]", ""));
+        }
+    }
+
     private void updatePaymentStatus() {
         if (!txtAmount.getText().isEmpty()) {
             cmbPaymentStatus.setValue(calculatePaymentStatus());
         }
+    }
+
+    private String calculatePaymentStatus() {
+        double paidAmount = txtAmount.getText().isEmpty() ? 0.0 :
+                Double.parseDouble(txtAmount.getText());
+        if (paidAmount >= totalAmount) {
+            return PaymentStatus.COMPLETED.name();
+        } else if (paidAmount > 0) {
+            return PaymentStatus.PARTIAL.name();
+        }
+        return PaymentStatus.PENDING.name();
     }
 
     private void generateNewRegistrationId() {
@@ -347,6 +444,7 @@ public class RegistrationFormController implements Initializable {
         try {
             registrations.clear();
             registrations.addAll(registrationBO.getAllRegistrations());
+            tblRegistrations.refresh();
         } catch (Exception e) {
             NotificationUtil.showError("Error loading registrations: " + e.getMessage());
         }
@@ -358,10 +456,12 @@ public class RegistrationFormController implements Initializable {
         txtContact.clear();
         txtEmail.clear();
         selectedPrograms.clear();
+        cmbProgram.setValue(null);
         cmbPaymentMethod.setValue(null);
         cmbPaymentStatus.setValue(PaymentStatus.PENDING.name());
         txtAmount.clear();
         updateTotalAmount();
+        updateBalanceDisplay();
     }
 
     private void showLoading(boolean show) {
@@ -373,6 +473,7 @@ public class RegistrationFormController implements Initializable {
                 .mapToDouble(ProgramDTO::getFee)
                 .sum();
         lblTotalAmount.setText(formatCurrency(totalAmount));
+        updateBalanceDisplay();
     }
 
     private double calculateTotalAmount(RegistrationDTO registration) {
@@ -442,18 +543,10 @@ public class RegistrationFormController implements Initializable {
 
     private void loadInitialData() {
         try {
-            // Load Students
             loadStudents();
-
-            // Load Programs
             loadPrograms();
-
-            // Load Registrations
             loadRegistrations();
-
-            // Generate new registration ID
             generateNewRegistrationId();
-
         } catch (Exception e) {
             NotificationUtil.showError("Error loading initial data: " + e.getMessage());
         }
@@ -477,39 +570,13 @@ public class RegistrationFormController implements Initializable {
         ));
     }
 
-    private void validateAndUpdateAmount(String amount) {
-        if (amount == null || amount.isEmpty()) {
-            cmbPaymentStatus.setValue("PENDING");
-            return;
-        }
-
-        try {
-            double value = Double.parseDouble(amount);
-            if (value < 0) {
-                NotificationUtil.showWarning("Amount cannot be negative");
-                txtAmount.setText("");
-                return;
-            }
-            if (value > totalAmount) {
-                NotificationUtil.showWarning("Amount cannot exceed " + formatCurrency(totalAmount));
-                txtAmount.setText("");
-                return;
-            }
-            updatePaymentStatus();
-        } catch (NumberFormatException e) {
-            txtAmount.setText(amount.replaceAll("[^\\d.]", ""));
-        }
-    }
-
     @FXML
     private void handleProgramSelection() {
         String programId = cmbProgram.getValue();
-        if (programId != null) {
-            if (selectedPrograms.stream()
-                    .anyMatch(p -> p.getProgramId().equals(programId))) {
-                NotificationUtil.showWarning("Program already added");
-                cmbProgram.setValue(null);
-            }
+        if (programId != null && selectedPrograms.stream()
+                .anyMatch(p -> p.getProgramId().equals(programId))) {
+            NotificationUtil.showWarning("Program already added");
+            cmbProgram.setValue(null);
         }
     }
 
@@ -526,14 +593,9 @@ public class RegistrationFormController implements Initializable {
         }
     }
 
+    @FXML
     public void handleClear(ActionEvent actionEvent) {
         clearForm();
     }
 
-    private void setupStatusIcon() {
-        FontAwesomeIconView icon = new FontAwesomeIconView(FontAwesomeIcon.CLOCK_ALT);
-        // or use another icon if CLOCK isn't what you want
-        icon.getStyleClass().add("status-icon");
-        statusIconContainer.getChildren().add(icon);
-    }
 }

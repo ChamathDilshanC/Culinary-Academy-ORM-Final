@@ -135,12 +135,10 @@ public class RegistrationBOImpl implements RegistrationBO {
         RegistrationDTO dto = new RegistrationDTO();
         dto.setId(registration.getId());
         dto.setStudentId(registration.getStudent().getStudentId());
-        dto.setStudentName(registration.getStudent().getFirstName() + " " +
-                registration.getStudent().getLastName());
+        dto.setStudentName(registration.getStudent().getFirstName() + " " + registration.getStudent().getLastName());
         dto.setRegistrationDate(registration.getRegistrationDate());
         dto.setPaymentStatus(registration.getPaymentStatus().name());
 
-        // Convert registration details
         List<RegistrationDetailsDTO> detailsDTOs = registration.getRegistrationDetails().stream()
                 .map(detail -> new RegistrationDetailsDTO(
                         detail.getId(),
@@ -152,19 +150,29 @@ public class RegistrationBOImpl implements RegistrationBO {
                 .collect(Collectors.toList());
         dto.setRegistrationDetails(detailsDTOs);
 
-        // Convert payments
         List<PaymentDTO> paymentDTOs = registration.getPayments().stream()
                 .map(payment -> new PaymentDTO(
                         payment.getId(),
                         registration.getId(),
+                        payment.getTotalAmount(),
                         payment.getAmount(),
+                        payment.getBalance(),
                         payment.getPaymentDate(),
                         payment.getPaymentMethod().name(),
-                        payment.getStatus().name()
+                        payment.getStatus().name(),
+                        payment.getCreatedAt(),
+                        payment.getUpdatedAt()
                 ))
                 .collect(Collectors.toList());
         dto.setPayments(paymentDTOs);
 
         return dto;
+    }
+    @Override
+    public boolean isStudentRegisteredForProgram(String studentId, String programId) throws Exception {
+        return registrationDAO.isStudentRegisteredForProgram(
+                Integer.parseInt(studentId),
+                programId
+        );
     }
 }
