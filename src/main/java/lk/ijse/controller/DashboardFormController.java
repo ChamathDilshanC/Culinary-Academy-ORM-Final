@@ -13,6 +13,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -35,6 +37,10 @@ import java.util.ResourceBundle;
 public class DashboardFormController implements Initializable {
 
     @FXML public Label labelUserId;
+    public Button btnDashboard;
+    public Button btnStudents;
+    public Button btnRegistrations;
+    public Button btnSettings;
     @FXML private BorderPane contentArea;
     @FXML private Label timeLabel;
     @FXML private Label dateLabel;
@@ -67,29 +73,34 @@ public class DashboardFormController implements Initializable {
     }
 
     private void setupRoleBasedAccess() {
-        // Map buttons for easier access
         restrictedButtons.put("programs", btnPrograms);
         restrictedButtons.put("reports", btnReports);
         restrictedButtons.put("userManagement", btnUserManagement);
 
-        // Add lock icons to restricted buttons if not admin
-        if (!userRole.getText().equals("ADMIN")) {
-            restrictedButtons.forEach((key, button) -> {
-                // Create lock icon
+        boolean isAdmin = userRole.getText().equals("ADMIN");
+
+        restrictedButtons.forEach((key, button) -> {
+            HBox buttonContent = (HBox) button.getGraphic();
+            buttonContent.getChildren().removeIf(node ->
+                    node instanceof FontAwesomeIconView &&
+                            ((FontAwesomeIconView) node).getGlyphName().equals("LOCK")
+            );
+
+            if (!isAdmin) {
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                buttonContent.getChildren().add(spacer);
+
                 FontAwesomeIconView lockIcon = new FontAwesomeIconView(FontAwesomeIcon.LOCK);
                 lockIcon.getStyleClass().add("lock-icon");
-
-                // Add to button
-                HBox buttonContent = (HBox) button.getGraphic();
+                lockIcon.setStyle("-fx-fill: #ef4444;");
                 buttonContent.getChildren().add(lockIcon);
-
-                // Store lock icon reference
                 lockIcons.put(key, lockIcon);
-
-                // Disable button
                 button.setDisable(true);
-            });
-        }
+            } else {
+                button.setDisable(false);
+            }
+        });
     }
 
     private void setupWindowProperties() {

@@ -72,44 +72,66 @@
 
                 <!-- Navigation Section -->
                 <VBox spacing="5" styleClass="nav-section">
-                    <Button text="Dashboard" onAction="#loadDashboard" styleClass="nav-button">
+                    <Button fx:id="btnDashboard" onAction="#loadDashboard" styleClass="nav-button">
                         <graphic>
-                            <FontAwesomeIconView glyphName="HOME" size="16"/>
+                            <HBox spacing="5">
+                                <FontAwesomeIconView glyphName="HOME" size="16"/>
+                                <Label text="Dashboard" />
+                            </HBox>
                         </graphic>
                     </Button>
 
-                    <Button text="Students" onAction="#loadStudents" styleClass="nav-button">
+                    <Button fx:id="btnStudents" onAction="#loadStudents" styleClass="nav-button">
                         <graphic>
-                            <FontAwesomeIconView glyphName="USERS" size="16"/>
+                            <HBox spacing="5">
+                                <FontAwesomeIconView glyphName="USERS" size="16"/>
+                                <Label text="Students" />
+                            </HBox>
                         </graphic>
                     </Button>
 
-                    <Button text="Culinary Programs" onAction="#loadCulinaryPrograms" styleClass="nav-button">
+                    <Button fx:id="btnPrograms" onAction="#loadCulinaryPrograms" styleClass="nav-button">
                         <graphic>
-                            <FontAwesomeIconView glyphName="BOOK" size="16"/>
+                            <HBox spacing="5">
+                                <FontAwesomeIconView glyphName="BOOK" size="16"/>
+                                <Label text="Culinary Programs" />
+                            </HBox>
                         </graphic>
                     </Button>
 
-                    <Button text="Registrations" onAction="#loadRegistrations" styleClass="nav-button">
+                    <Button fx:id="btnRegistrations" onAction="#loadRegistrations" styleClass="nav-button">
                         <graphic>
-                            <FontAwesomeIconView glyphName="LIST_ALT" size="16"/>
+                            <HBox spacing="5">
+                                <FontAwesomeIconView glyphName="LIST_ALT" size="16"/>
+                                <Label text="Registrations" />
+                            </HBox>
                         </graphic>
                     </Button>
 
-                    <Button text="Reports" onAction="#loadReports" styleClass="nav-button">
+                    <Button fx:id="btnReports" onAction="#loadReports" styleClass="nav-button">
                         <graphic>
-                            <FontAwesomeIconView glyphName="BAR_CHART" size="16"/>
+                            <HBox spacing="5">
+                                <FontAwesomeIconView glyphName="BAR_CHART" size="16"/>
+                                <Label text="Reports" />
+                            </HBox>
                         </graphic>
                     </Button>
 
-                    <Button text="Manage Users" onAction="#loadUserManagement" styleClass="nav-button">
+                    <Button fx:id="btnUserManagement" onAction="#loadUserManagement" styleClass="nav-button">
                         <graphic>
-                            <FontAwesomeIconView glyphName="USERS" size="16"/>
+                            <HBox spacing="5">
+                                <FontAwesomeIconView glyphName="USERS" size="16"/>
+                                <Label text="Manage Users" />
+                            </HBox>
                         </graphic>
                     </Button>
-                    <Button text="Settings" onAction="#loadSettings" styleClass="nav-button">
+
+                    <Button fx:id="btnSettings" onAction="#loadSettings" styleClass="nav-button">
                         <graphic>
-                            <FontAwesomeIconView glyphName="GEAR" size="16"/>
+                            <HBox spacing="5">
+                                <FontAwesomeIconView glyphName="GEAR" size="16"/>
+                                <Label text="Settings" />
+                            </HBox>
                         </graphic>
                     </Button>
                 </VBox>
