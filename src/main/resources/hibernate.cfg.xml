@@ -9,18 +9,10 @@
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/culinary_academy?createDatabaseIfNotExist=true</property>
     <property name="hibernate.connection.username">root</property>
     <property name="hibernate.connection.password">Ijse@123</property>
-
-    <!-- SQL dialect -->
     <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
-
-    <!-- Echo all executed SQL to stdout -->
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.format_sql">true</property>
-
-    <!-- Drop and re-create the database schema on startup -->
     <property name="hibernate.hbm2ddl.auto">update</property>
-
-    <!-- Names the annotated entity classes -->
     <mapping class="lk.ijse.entity.Student"/>
     <mapping class="lk.ijse.entity.User"/>
     <mapping class="lk.ijse.entity.Program"/>
