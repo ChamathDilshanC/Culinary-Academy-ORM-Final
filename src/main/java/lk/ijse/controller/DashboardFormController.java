@@ -93,7 +93,6 @@ public class DashboardFormController implements Initializable {
 
                 FontAwesomeIconView lockIcon = new FontAwesomeIconView(FontAwesomeIcon.LOCK);
                 lockIcon.getStyleClass().add("lock-icon");
-                lockIcon.setStyle("-fx-fill: #ef4444;");
                 buttonContent.getChildren().add(lockIcon);
                 lockIcons.put(key, lockIcon);
                 button.setDisable(true);
