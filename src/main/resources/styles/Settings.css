@@ -1,0 +1,177 @@
+/* Settings Page Specific Styles */
+.main-container {
+    -fx-background-color: #f0f2f5;
+    -fx-fill-width: true;
+    -fx-spacing: 0;
+}
+
+.header {
+    -fx-background-color: white;
+    -fx-padding: 24 32;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-min-height: 80;
+}
+
+.header .header-icon {
+    -fx-fill: #4a90e2;
+    -fx-font-size: 24;
+    -fx-padding: 0 16 0 0;
+}
+
+.header .header-title {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.content-area {
+    -fx-padding: 32;
+    -fx-spacing: 24;
+    -fx-alignment: top-center;
+}
+
+.section-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 24;
+    -fx-spacing: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 1);
+    -fx-min-width: 800;
+    -fx-max-width: 1200;
+}
+
+.section-header {
+    -fx-spacing: 16;
+    -fx-padding: 0 0 16 0;
+    -fx-border-color: transparent transparent #e1e4e8 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.section-header .section-icon {
+    -fx-fill: #4a90e2;
+    -fx-font-size: 20;
+}
+
+.section-header .section-title {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.settings-grid {
+    -fx-hgap: 32;
+    -fx-vgap: 24;
+    -fx-padding: 16 0;
+}
+
+.field-label {
+    -fx-font-size: 14;
+    -fx-text-fill: #566573;
+    -fx-padding: 0 0 8 0;
+}
+
+.combo-box-primary {
+    -fx-min-width: 300;
+    -fx-pref-width: 300;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e1e4e8;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.combo-box-primary:hover {
+    -fx-border-color: #4a90e2;
+}
+
+.combo-box-primary .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box-primary .arrow {
+    -fx-background-color: #566573;
+}
+
+.checkbox-container {
+    -fx-spacing: 16;
+    -fx-padding: 8 0;
+}
+
+.check-box {
+    -fx-font-size: 14;
+    -fx-text-fill: #2c3e50;
+}
+
+.check-box .box {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e1e4e8;
+    -fx-border-radius: 3;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #4a90e2;
+    -fx-border-color: #4a90e2;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+.action-buttons {
+    -fx-spacing: 16;
+    -fx-padding: 16 0 0 0;
+    -fx-alignment: center-right;
+}
+
+.btn-secondary, .btn-primary {
+    -fx-padding: 12 24;
+    -fx-font-size: 14;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.btn-secondary {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e1e4e8;
+    -fx-text-fill: #566573;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.btn-secondary FontAwesomeIconView {
+    -fx-fill: #566573;
+}
+
+.btn-primary {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #357abd;
+}
+
+.btn-primary FontAwesomeIconView {
+    -fx-fill: white;
+}
+
+/* Hover Effects */
+.section-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 2);
+}
+
+/* Focus States */
+.combo-box-primary:focused {
+    -fx-border-color: #4a90e2;
+    -fx-border-width: 2;
+}
+
+.check-box:focused > .box {
+    -fx-border-color: #4a90e2;
+}
+
+/* Animation */
+.btn-primary, .btn-secondary, .combo-box-primary, .check-box {
+    -fx-transition: all 0.2s ease-in-out;
+}

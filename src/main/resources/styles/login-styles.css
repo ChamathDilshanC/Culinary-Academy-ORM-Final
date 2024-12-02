@@ -14,7 +14,7 @@
 }
 
 .bg-shape {
-    -fx-fill: rgba(108, 99, 255, 0.05);
+    -fx-fill: rgba(0, 248, 255, 0.05);
     -fx-stroke: rgba(108, 99, 255, 0.1);
     -fx-stroke-width: 2;
 }

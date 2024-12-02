@@ -254,7 +254,12 @@ public class DashboardFormController implements Initializable {
 
     @FXML
     public void loadSettings(ActionEvent actionEvent) {
-        NotificationUtil.showWarning("Settings module coming soon!");
+
+        if (!userRole.getText().equals("ADMIN")) {
+            NotificationUtil.showWarning("Access denied. Admin privileges required.");
+            return;
+        }
+        loadFXML("settings_form.fxml");
     }
 
     @FXML

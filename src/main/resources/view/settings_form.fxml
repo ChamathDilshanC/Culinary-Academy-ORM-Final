@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.net.URL?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="lk.ijse.controller.SettingsController"
+      styleClass="main-container"
+      VBox.vgrow="ALWAYS">
+
+    <stylesheets>
+        <URL value="@/styles/Settings.css"/>
+    </stylesheets>
+
+    <!-- Header -->
+    <HBox styleClass="header">
+        <FontAwesomeIconView glyphName="COGS" styleClass="header-icon"/>
+        <Text text="Settings" styleClass="header-title"/>
+    </HBox>
+
+    <!-- Content -->
+    <VBox styleClass="content-area" VBox.vgrow="ALWAYS">
+        <!-- Appearance -->
+        <VBox styleClass="section-card">
+            <HBox styleClass="section-header">
+                <FontAwesomeIconView glyphName="PAINT_BRUSH" styleClass="section-icon"/>
+                <Text text="Appearance" styleClass="section-title"/>
+            </HBox>
+            <GridPane styleClass="settings-grid">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+                <VBox GridPane.columnIndex="0">
+                    <Label text="Theme" styleClass="field-label"/>
+                    <ComboBox fx:id="cmbTheme" styleClass="combo-box-primary"/>
+                </VBox>
+                <VBox GridPane.columnIndex="1">
+                    <Label text="Font Size" styleClass="field-label"/>
+                    <ComboBox fx:id="cmbFontSize" styleClass="combo-box-primary"/>
+                </VBox>
+            </GridPane>
+        </VBox>
+
+        <!-- Notifications -->
+        <VBox styleClass="section-card">
+            <HBox styleClass="section-header">
+                <FontAwesomeIconView glyphName="BELL" styleClass="section-icon"/>
+                <Text text="Notifications" styleClass="section-title"/>
+            </HBox>
+            <VBox styleClass="checkbox-container">
+                <CheckBox fx:id="chkEmailNotifications" text="Email Notifications"/>
+                <CheckBox fx:id="chkSoundNotifications" text="Sound Notifications"/>
+            </VBox>
+        </VBox>
+
+        <!-- Actions -->
+        <HBox styleClass="action-buttons">
+            <Button onAction="#handleReset" styleClass="btn-secondary">
+                <graphic>
+                    <HBox spacing="8" alignment="CENTER">
+                        <FontAwesomeIconView glyphName="REFRESH"/>
+                        <Label text="Reset to Default"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button onAction="#handleSave" styleClass="btn-primary">
+                <graphic>
+                    <HBox spacing="8" alignment="CENTER">
+                        <FontAwesomeIconView glyphName="SAVE"/>
+                        <Label text="Save Changes"/>
+                    </HBox>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+</VBox>
