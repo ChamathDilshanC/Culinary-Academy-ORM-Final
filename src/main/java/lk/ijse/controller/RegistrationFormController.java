@@ -421,7 +421,7 @@ public class RegistrationFormController implements Initializable {
     private String calculatePaymentStatus() {
         double paidAmount = txtAmount.getText().isEmpty() ? 0.0 :
                 Double.parseDouble(txtAmount.getText());
-        if (paidAmount >= totalAmount) {
+        if (paidAmount == totalAmount) {
             return PaymentStatus.COMPLETED.name();
         } else if (paidAmount > 0) {
             return PaymentStatus.PARTIAL.name();
@@ -568,29 +568,6 @@ public class RegistrationFormController implements Initializable {
                         .map(ProgramDTO::getProgramId)
                         .toList()
         ));
-    }
-
-    @FXML
-    private void handleProgramSelection() {
-        String programId = cmbProgram.getValue();
-        if (programId != null && selectedPrograms.stream()
-                .anyMatch(p -> p.getProgramId().equals(programId))) {
-            NotificationUtil.showWarning("Program already added");
-            cmbProgram.setValue(null);
-        }
-    }
-
-    @FXML
-    private void handleKeyPress(KeyEvent event) {
-        if (event.getCode() == KeyCode.ENTER) {
-            if (event.getSource() == cmbStudentId) {
-                cmbProgram.requestFocus();
-            } else if (event.getSource() == cmbProgram) {
-                handleAddProgram();
-            } else if (event.getSource() == txtAmount && !txtAmount.getText().isEmpty()) {
-                handleRegister();
-            }
-        }
     }
 
     @FXML
